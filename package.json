@@ -25,9 +25,10 @@
     "db:migrate": "turbo -F @my-better-t-app/db db:migrate"
   },
   "dependencies": {
+    "@my-better-t-app/env": "workspace:*",
     "dotenv": "catalog:",
-    "zod": "catalog:",
-    "@my-better-t-app/env": "workspace:*"
+    "framer-motion": "^12.23.26",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "turbo": "^2.6.3",

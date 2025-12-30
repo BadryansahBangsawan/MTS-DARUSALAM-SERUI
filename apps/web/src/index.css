@@ -126,3 +126,21 @@
     @apply font-sans;
   }
 }
+
+.bg-cream {
+  background-color: #FFF2E1;
+}
+
+.text-darken {
+  color: #2F327D;
+}
+
+@keyframes floating {
+  0% { transform: translate(0, 0px); }
+  50% { transform: translate(0, 8px); }
+  100% { transform: translate(0, -0px); }
+}
+
+.floating {
+  animation: floating 3s ease-in-out infinite;
+}

@@ -1,30 +1,32 @@
-"use client";
-
-const TITLE_TEXT = `
- ██████╗ ███████╗████████╗████████╗███████╗██████╗
- ██╔══██╗██╔════╝╚══██╔══╝╚══██╔══╝██╔════╝██╔══██╗
- ██████╔╝█████╗     ██║      ██║   █████╗  ██████╔╝
- ██╔══██╗██╔══╝     ██║      ██║   ██╔══╝  ██╔══██╗
- ██████╔╝███████╗   ██║      ██║   ███████╗██║  ██║
- ╚═════╝ ╚══════╝   ╚═╝      ╚═╝   ╚══════╝╚═╝  ╚═╝
-
- ████████╗    ███████╗████████╗ █████╗  ██████╗██╗  ██╗
- ╚══██╔══╝    ██╔════╝╚══██╔══╝██╔══██╗██╔════╝██║ ██╔╝
-    ██║       ███████╗   ██║   ███████║██║     █████╔╝
-    ██║       ╚════██║   ██║   ██╔══██║██║     ██╔═██╗
-    ██║       ███████║   ██║   ██║  ██║╚██████╗██║  ██╗
-    ╚═╝       ╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝
- `;
+import Hero from "@/components/home/hero";
+import VisiMisi from "@/components/home/visi-misi";
+import VideoSection from "@/components/home/video-section";
+import EnvironmentFeatures from "@/components/home/environment-features";
+import PrincipalWelcome from "@/components/home/principal-welcome";
+import EkstrakurikulerPreview from "@/components/home/ekstrakurikuler-preview";
+import PersonalApproach from "@/components/home/personal-approach";
+import OsissSection from "@/components/home/osis-section";
+import MataPelajaran from "@/components/home/mata-pelajaran";
+import Testimoni from "@/components/home/testimoni";
 
 export default function Home() {
   return (
-    <div className="container mx-auto max-w-3xl px-4 py-2">
-      <pre className="overflow-x-auto font-mono text-sm">{TITLE_TEXT}</pre>
-      <div className="grid gap-6">
-        <section className="rounded-lg border p-4">
-          <h2 className="mb-2 font-medium">API Status</h2>
-        </section>
+    <main>
+      <Hero />
+
+      <div className="bg-white">
+        <div className="container px-4 lg:px-8 mx-auto max-w-screen-xl text-gray-700 overflow-x-hidden">
+          <VisiMisi />
+          <VideoSection />
+          <EnvironmentFeatures />
+          <PrincipalWelcome />
+          <EkstrakurikulerPreview />
+          <PersonalApproach />
+          <OsissSection />
+          <MataPelajaran />
+          <Testimoni />
+        </div>
       </div>
-    </div>
+    </main>
   );
 }
