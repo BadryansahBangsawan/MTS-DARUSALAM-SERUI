@@ -2,8 +2,31 @@
 
 import { motion } from "framer-motion";
 import { Play } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function Hero() {
+  const [data, setData] = useState<{ name?: string; description?: string; whatsappRegistration?: string }>({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/school-information")
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.success && result.data) {
+          setData(result.data);
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching school info:", err);
+        setLoading(false);
+      });
+  }, []);
+
+  const schoolName = data.name || "MTs Darussalam";
+  const description = data.description || "MTs Darussalam adalah sekolah Islam setingkat SMP yang siap membimbing kamu dengan metode pembelajaran modern dan islami";
+  const whatsappNumber = data.whatsappRegistration || "6281354155066";
+
   return (
     <div id="home" className="bg-cream scroll-mt-28">
       <div className="max-w-screen-xl px-8 mx-auto flex flex-col lg:flex-row items-start">
@@ -16,7 +39,7 @@ export default function Hero() {
             data-aos="fade-right"
             data-aos-once="true"
           >
-            <span className="text-green-400">MTs</span> Darussalam
+            {schoolName}
           </motion.h1>
 
           <motion.p
@@ -28,8 +51,7 @@ export default function Hero() {
             data-aos-once="true"
             data-aos-delay="300"
           >
-            MTs Darussalam adalah sekolah Islam setingkat SMP yang siap
-            membimbing kamu dengan metode pembelajaran modern dan islami
+            {description}
           </motion.p>
 
           <motion.div
@@ -42,7 +64,7 @@ export default function Hero() {
             data-aos-delay="700"
           >
             <a
-              href="https://wa.me/6281354155066?text=Halo%20saya%20ingin%20daftar%20MTS%20Darrusalam"
+              href={`https://wa.me/${whatsappNumber}?text=Halo%20saya%20ingin%20daftar%20${encodeURIComponent(schoolName)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="lg:mx-0 bg-yellow-500 text-white text-xl font-bold rounded-full py-4 px-9 focus:outline-none transform transition hover:scale-110 duration-300 ease-in-out inline-block"

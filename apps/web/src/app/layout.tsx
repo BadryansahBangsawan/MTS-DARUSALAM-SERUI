@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 
 import "../index.css";
-import Navbar from "@/components/navbar";
-import Footer from "@/components/footer";
+import PublicLayoutWrapper from "@/components/public-layout-wrapper";
 
 const poppins = Poppins({
   weight: ["400", "500", "600", "700"],
@@ -27,11 +26,7 @@ export default function RootLayout({
   return (
     <html lang="id">
       <body className={`${poppins.variable} font-sans antialiased flex flex-col min-h-screen`}>
-        <Navbar />
-        <main className="flex-1 flex flex-col">
-          {children}
-        </main>
-        <Footer />
+        <PublicLayoutWrapper>{children}</PublicLayoutWrapper>
       </body>
     </html>
   );

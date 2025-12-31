@@ -2,8 +2,27 @@
 
 import { motion } from "framer-motion";
 import { Eye, Target } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function VisiMisi() {
+  const [data, setData] = useState<{ vision?: string; mission?: string; description?: string }>({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/school-information")
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.success && result.data) {
+          setData(result.data);
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching school info:", err);
+        setLoading(false);
+      });
+  }, []);
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -25,6 +44,18 @@ export default function VisiMisi() {
     },
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
+      </div>
+    );
+  }
+
+  const visionText = data.vision || "Menjadi Madrasah Tsanawiyah yang unggul dalam prestasi, berkarakter Islami, dan berwawasan global.";
+  const missionText = data.mission || "Menyelenggarakan pendidikan Islam yang berkualitas, membentuk siswa yang beriman, bertakwa, berakhlak mulia, dan mampu bersaing di era global.";
+  const descriptionText = data.description || "MTs Darussalam berkomitmen menciptakan lingkungan belajar yang islami, modern, dan didukung fasilitas lengkap demi menunjang proses pembelajaran yang efektif, efisien, dan berkualitas.";
+
   return (
     <>
       <motion.div
@@ -38,9 +69,7 @@ export default function VisiMisi() {
           Visi & Misi <span className="text-green-400">MTs Darussalam</span>
         </h1>
         <p className="leading-relaxed text-gray-500">
-          MTs Darussalam berkomitmen menciptakan lingkungan belajar yang islami,
-          modern, dan didukung fasilitas lengkap demi menunjang proses pembelajaran
-          yang efektif, efisien, dan berkualitas.
+          {descriptionText}
         </p>
       </motion.div>
 
@@ -59,8 +88,7 @@ export default function VisiMisi() {
           </div>
           <h1 className="font-medium text-xl mb-3 lg:px-14 text-darken">Visi</h1>
           <p className="px-4 text-gray-500">
-            Menjadi Madrasah Tsanawiyah yang unggul dalam prestasi, berkarakter
-            Islami, dan berwawasan global.
+            {visionText}
           </p>
         </motion.div>
 
@@ -73,9 +101,7 @@ export default function VisiMisi() {
           </div>
           <h1 className="font-medium text-xl mb-3 lg:px-14 text-darken">Misi</h1>
           <p className="px-4 text-gray-500">
-            Menyelenggarakan pendidikan Islam yang berkualitas, membentuk
-            siswa yang beriman, bertakwa, berakhlak mulia, dan mampu bersaing
-            di era global.
+            {missionText}
           </p>
         </motion.div>
       </motion.div>

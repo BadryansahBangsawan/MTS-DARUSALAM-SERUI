@@ -7,11 +7,12 @@ import { Menu, X } from "lucide-react";
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
-  const navLinks: Array<{ href: string; label: string; section?: string }> = [
+  const navLinks: Array<{ href: string; label: string; section?: string; variant?: string }> = [
     { href: "/", label: "Beranda", section: "home" },
     { href: "/susunan-organisasi", label: "Susunan Organisasi" },
     { href: "/", label: "Mata Pelajaran", section: "mata-pelajaran" },
     { href: "/ekstrakurikuler", label: "Ekstrakurikuler" },
+    { href: "/admin", label: "Admin", variant: "primary" },
   ];
 
   return (
@@ -51,7 +52,11 @@ export default function Navbar() {
                   : link.href
               }
               onClick={() => setIsOpen(false)}
-              className="px-4 py-2 mt-2 text-sm bg-transparent rounded-lg md:ml-4 hover:text-gray-900 focus:outline-none focus:shadow-outline"
+              className={`px-4 py-2 mt-2 text-sm rounded-lg md:ml-4 focus:outline-none focus:shadow-outline ${
+                link.variant === 'primary'
+                  ? 'bg-green-500 text-white hover:bg-green-600'
+                  : 'bg-transparent hover:text-gray-900'
+              }`}
             >
               {link.label}
             </Link>

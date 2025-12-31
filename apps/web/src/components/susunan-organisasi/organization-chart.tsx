@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { Loader2 } from "lucide-react";
 
 interface OrganizationNode {
   title: string;
@@ -10,113 +12,50 @@ interface OrganizationNode {
   border?: string;
 }
 
-const nodes: OrganizationNode[] = [
-  { title: "KEMENAG", border: "border-green-400" },
-  {
-    title: "KOMITE MADRASAH",
-    subtitle: "Achmad Nur Bennu",
-    border: "border-green-400",
-  },
-  { title: "DINAS DIKPORA", border: "border-green-400" },
-];
-
-const ketuaYayasan: OrganizationNode = {
-  title: "KETUA YAYASAN",
-  subtitle: "H. Najamuddin Yusuf",
-  color: "bg-gradient-to-r from-green-600 to-green-400 text-white",
-};
-
-const kepalaMadrasah: OrganizationNode = {
-  title: "KEPALA MADRASAH",
-  subtitle: "Drs. H. Muchtar",
-};
-
-const branches: OrganizationNode[] = [
-  {
-    title: "KEPALA TATA USAHA",
-    subtitle: "Hanifah, S.Pd",
-    border: "border-green-300",
-  },
-  {
-    title: "BENDAHARA",
-    subtitle: "Drs. Sunardja, M.Pd",
-    border: "border-green-300",
-  },
-  { title: "STAF TATA USAHA", border: "border-green-300" },
-  {
-    title: "WAKAMAD HUMAS",
-    subtitle: "Marsyanti, S.Hum",
-    border: "border-green-300",
-  },
-  {
-    title: "WAKAMAD KESISWAAN",
-    subtitle: "Manfud Fauzi, S.Pd.I",
-    border: "border-green-300",
-  },
-  {
-    title: "WAKAMAD SARPRAS",
-    subtitle: "Arum Pawening, S.Pd",
-    border: "border-green-300",
-  },
-  {
-    title: "PENGELOLA PERPUSTAKAAN",
-    subtitle: "Reni Iriani, S.Pd.I",
-    border: "border-green-300",
-  },
-  {
-    title: "GURU BP / BK",
-    subtitle: "Irwan, S.Pd",
-    border: "border-green-300",
-  },
-];
-
-const labManagers: OrganizationNode[] = [
-  {
-    title: "PENGELOLA LAB. IPA",
-    subtitle: "Kurniawan Ramadan, S.Pd",
-    border: "border-green-300",
-  },
-  {
-    title: "PENGELOLA LAB. KOMP",
-    subtitle: "Fatmawati Ruyatomi, S.Hum",
-    border: "border-green-300",
-  },
-];
-
-const waliKelas: OrganizationNode[] = [
-  {
-    title: "WALI KELAS VII A",
-    subtitle: "Marhani, S.Pd",
-    border: "border-green-300",
-  },
-  {
-    title: "WALI KELAS VII B",
-    subtitle: "Benediktus Nupab",
-    border: "border-green-300",
-  },
-  {
-    title: "WALI KELAS VIII A",
-    subtitle: "Marhani, S.Pd.I",
-    border: "border-green-300",
-  },
-  {
-    title: "WALI KELAS VIII B",
-    subtitle: "Benediktus Nupab",
-    border: "border-green-300",
-  },
-  {
-    title: "WALI KELAS IX A",
-    subtitle: "Arisnawaty, S.Pd",
-    border: "border-green-300",
-  },
-  {
-    title: "WALI KELAS IX B",
-    subtitle: "Irwan, S.Pd",
-    border: "border-green-300",
-  },
-];
+interface OrganizationPosition {
+  id: number;
+  title: string;
+  personName?: string;
+  roleCategory: "supervisory" | "leadership" | "staff" | "teaching" | "lab_manager";
+  sortOrder: number;
+  colorTheme?: string;
+  backgroundStyle?: string;
+}
 
 export default function OrganizationChart() {
+  const [positions, setPositions] = useState<OrganizationPosition[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchPositions();
+  }, []);
+
+  const fetchPositions = async () => {
+    try {
+      const response = await fetch("/api/organization-positions");
+      const data = await response.json();
+      if (data.success) {
+        setPositions(data.data || []);
+      }
+    } catch (error) {
+      console.error("Error fetching organization positions:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getNodes = (category: string): OrganizationNode[] => {
+    return positions
+      .filter((p) => p.roleCategory === category)
+      .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0))
+      .map((p) => ({
+        title: p.title,
+        subtitle: p.personName || undefined,
+        border: p.colorTheme || "border-green-300",
+        color: p.backgroundStyle || undefined,
+      }));
+  };
+
   const Node = ({
     node,
     delay = 0,
@@ -142,6 +81,34 @@ export default function OrganizationChart() {
     </motion.div>
   );
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-12 w-12 animate-spin text-green-500" />
+      </div>
+    );
+  }
+
+  const nodes = getNodes("supervisory");
+  const branches = getNodes("staff");
+  const labManagers = getNodes("lab_manager");
+  const waliKelas = getNodes("teaching");
+
+  const ketuaYayasan = positions.find((p) => p.title === "KETUA YAYASAN");
+  const kepalaMadrasah = positions.find((p) => p.title === "KEPALA MADRASAH");
+
+  const ketuaYayasanNode: OrganizationNode = {
+    title: ketuaYayasan?.title || "KETUA YAYASAN",
+    subtitle: ketuaYayasan?.personName || undefined,
+    color: ketuaYayasan?.backgroundStyle || "bg-gradient-to-r from-green-600 to-green-400 text-white",
+    border: ketuaYayasan?.colorTheme,
+  };
+
+  const kepalaMadrasahNode: OrganizationNode = {
+    title: kepalaMadrasah?.title || "KEPALA MADRASAH",
+    subtitle: kepalaMadrasah?.personName || undefined,
+  };
+
   return (
     <div className="relative w-full min-h-full">
       {/* ISI TETAP */}
@@ -155,11 +122,11 @@ export default function OrganizationChart() {
         <div className="w-px h-8 bg-green-400 mx-auto"></div>
 
         <div className="flex justify-center">
-          <Node node={ketuaYayasan} delay={0.3} />
+          <Node node={ketuaYayasanNode} delay={0.3} />
         </div>
 
         <div className="flex flex-col items-center">
-          <Node node={kepalaMadrasah} delay={0.4} />
+          <Node node={kepalaMadrasahNode} delay={0.4} />
         </div>
 
         <div
@@ -229,6 +196,12 @@ export default function OrganizationChart() {
             <Node key={index} node={kelas} delay={1.1 + index * 0.05} />
           ))}
         </div>
+
+        {positions.length === 0 && (
+          <div className="text-center py-20 text-gray-500">
+            Belum ada struktur organisasi.
+          </div>
+        )}
       </div>
     </div>
   );

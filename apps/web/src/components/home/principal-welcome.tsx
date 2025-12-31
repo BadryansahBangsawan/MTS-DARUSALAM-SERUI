@@ -1,14 +1,40 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useCounterAnimation } from "@/hooks/useCounterAnimation";
 
 export default function PrincipalWelcome() {
-  const studentCounter = useCounterAnimation(190, 1200);
-  const applicantCounter = useCounterAnimation(63, 1200);
+  const [data, setData] = useState<{
+    principalName?: string;
+    principalTitle?: string;
+    principalImage?: string;
+    totalStudents?: number;
+    averageApplicantsPerYear?: number;
+  }>({});
+  const [loading, setLoading] = useState(true);
+
+  const studentCounter = useCounterAnimation(data.totalStudents || 190, 1200);
+  const applicantCounter = useCounterAnimation(data.averageApplicantsPerYear || 63, 1200);
 
   useEffect(() => {
+    fetch("/api/school-information")
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.success && result.data) {
+          setData(result.data);
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching school info:", err);
+        setLoading(false);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (loading) return;
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -31,7 +57,19 @@ export default function PrincipalWelcome() {
         observer.unobserve(countersSection);
       }
     };
-  }, []);
+  }, [loading, studentCounter, applicantCounter]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
+      </div>
+    );
+  }
+
+  const principalName = data.principalName || "Drs. H. Muchtar";
+  const principalTitle = data.principalTitle || "Kepala Sekolah MTs Darussalam";
+  const principalImage = data.principalImage || "/Muhktar.png";
 
   return (
     <div className="flex flex-col md:flex-row items-center md:items-start md:space-x-16 mt-20">
@@ -42,15 +80,15 @@ export default function PrincipalWelcome() {
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
           className="mx-auto rounded-xl w-72 h-96 object-cover mb-6"
-          src="/Muhktar.png"
+          src={principalImage}
           alt="Kepala Sekolah"
         />
         <div className="text-center mt-2">
           <h2 className="text-xl font-bold text-green-500">
-            Drs. H. Muchtar
+            {principalName}
           </h2>
           <p className="text-gray-500 text-base">
-            Kepala Sekolah MTs Darussalam
+            {principalTitle}
           </p>
         </div>
       </div>
