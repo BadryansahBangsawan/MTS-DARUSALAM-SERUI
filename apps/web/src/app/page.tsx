@@ -1,13 +1,10 @@
 import Hero from "@/components/home/hero";
 import VisiMisi from "@/components/home/visi-misi";
-import VideoSection from "@/components/home/video-section";
 import EnvironmentFeatures from "@/components/home/environment-features";
 import PrincipalWelcome from "@/components/home/principal-welcome";
 import EkstrakurikulerPreview from "@/components/home/ekstrakurikuler-preview";
 import PersonalApproach from "@/components/home/personal-approach";
 import OsissSection from "@/components/home/osis-section";
-import MataPelajaran from "@/components/home/mata-pelajaran";
-import Testimoni from "@/components/home/testimoni";
 
 export default function Home() {
   return (
@@ -17,14 +14,11 @@ export default function Home() {
       <div className="bg-white">
         <div className="container px-4 lg:px-8 mx-auto max-w-screen-xl text-gray-700 overflow-x-hidden">
           <VisiMisi />
-          <VideoSection />
           <EnvironmentFeatures />
           <PrincipalWelcome />
           <EkstrakurikulerPreview />
           <PersonalApproach />
           <OsissSection />
-          <MataPelajaran />
-          <Testimoni />
         </div>
       </div>
     </main>

@@ -1,14 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Pencil, Trash2, Plus } from "lucide-react";
-import { DataTable } from "@/components/admin/data-table";
+import { Pencil, Trash2, Plus, GripVertical, ChevronDown, ChevronRight } from "lucide-react";
 import { ModalForm } from "@/components/admin/modal-form";
 import { ConfirmDialog } from "@/components/admin/confirm-dialog";
-import { FilterTabs } from "@/components/admin/filter-tabs";
 import { ColorPicker } from "@/components/admin/color-picker";
-import { Badge } from "@/components/admin/badge";
 import { Button } from "@/components/ui/button";
+import { authFetch } from "@/lib/auth";
 
 interface OrganizationPosition {
   id: number;
@@ -26,22 +24,50 @@ interface FormData {
   roleCategory: OrganizationPosition["roleCategory"];
   sortOrder: number;
   colorTheme: string;
+  backgroundStyle?: string;
 }
 
-const categoryOptions = [
-  { id: "all", label: "Semua" },
-  { id: "supervisory", label: "Pengawas" },
-  { id: "leadership", label: "Pimpinan" },
-  { id: "staff", label: "Staf" },
-  { id: "teaching", label: "Guru" },
-  { id: "lab_manager", label: "Kepala Lab" },
+const categories = [
+  {
+    id: "supervisory" as const,
+    label: "Pengawas",
+    description: "KEMENAG, KOMITE MADRASAH, DINAS DIKPORA",
+    color: "border-green-400",
+    maxItems: 3,
+  },
+  {
+    id: "leadership" as const,
+    label: "Pimpinan",
+    description: "KETUA YAYASAN, KEPALA MADRASAH",
+    color: "bg-gradient-to-r from-green-600 to-green-400 text-white",
+    maxItems: 2,
+  },
+  {
+    id: "staff" as const,
+    label: "Staf",
+    description: "Tata Usaha, Bendahara, Wakamad, dll",
+    color: "border-green-300",
+    maxItems: 8,
+  },
+  {
+    id: "lab_manager" as const,
+    label: "Kepala Lab",
+    description: "Lab IPA, Lab Komputer",
+    color: "border-green-300",
+    maxItems: 2,
+  },
+  {
+    id: "teaching" as const,
+    label: "Dewan Guru",
+    description: "Wali Kelas VII, VIII, IX",
+    color: "border-green-300",
+    maxItems: 6,
+  },
 ];
 
 export default function OrganizationPositionsPage() {
   const [items, setItems] = useState<OrganizationPosition[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState<OrganizationPosition | null>(null);
   const [deletingItem, setDeletingItem] = useState<OrganizationPosition | null>(null);
@@ -53,6 +79,7 @@ export default function OrganizationPositionsPage() {
     sortOrder: 0,
     colorTheme: "green",
   });
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set(categories.map(c => c.id)));
 
   useEffect(() => {
     fetchItems();
@@ -60,7 +87,7 @@ export default function OrganizationPositionsPage() {
 
   const fetchItems = async () => {
     try {
-      const response = await fetch("/api/organization-positions");
+      const response = await authFetch("/api/organization-positions");
       const data = await response.json();
       if (data.success) {
         setItems(data.data || []);
@@ -72,26 +99,22 @@ export default function OrganizationPositionsPage() {
     }
   };
 
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
+  const getItemsByCategory = (categoryId: string): OrganizationPosition[] => {
+    return items
+      .filter((item) => item.roleCategory === categoryId)
+      .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
   };
 
-  const filteredItems = items.filter((item) => {
-    const matchesSearch =
-      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (item.personName && item.personName.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesCategory = selectedCategory === "all" || item.roleCategory === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
-
-  const handleAdd = () => {
+  const handleAdd = (category: OrganizationPosition["roleCategory"]) => {
     setEditingItem(null);
+    const categoryItems = getItemsByCategory(category);
     setFormData({
       title: "",
       personName: "",
-      roleCategory: "staff",
-      sortOrder: 0,
-      colorTheme: "green",
+      roleCategory: category,
+      sortOrder: categoryItems.length,
+      colorTheme: category === "supervisory" ? "green" : "green",
+      backgroundStyle: category === "leadership" ? "bg-gradient-to-r from-green-600 to-green-400 text-white" : undefined,
     });
     setShowModal(true);
   };
@@ -104,6 +127,7 @@ export default function OrganizationPositionsPage() {
       roleCategory: item.roleCategory,
       sortOrder: item.sortOrder || 0,
       colorTheme: item.colorTheme || "green",
+      backgroundStyle: item.backgroundStyle,
     });
     setShowModal(true);
   };
@@ -116,7 +140,7 @@ export default function OrganizationPositionsPage() {
     if (!deletingItem) return;
 
     try {
-      const response = await fetch(`/api/organization-positions/${deletingItem.id}`, {
+      const response = await authFetch(`/api/organization-positions/${deletingItem.id}`, {
         method: "DELETE",
       });
       if (response.ok) {
@@ -143,9 +167,8 @@ export default function OrganizationPositionsPage() {
         : "/api/organization-positions";
       const method = editingItem ? "PUT" : "POST";
 
-      const response = await fetch(url, {
+      const response = await authFetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
@@ -163,34 +186,35 @@ export default function OrganizationPositionsPage() {
     }
   };
 
-  const columns = [
-    {
-      key: "title",
-      label: "Judul",
-      sortable: true,
-    },
-    {
-      key: "personName",
-      label: "Nama Orang",
-    },
-    {
-      key: "roleCategory",
-      label: "Kategori",
-      render: (value: string) => <Badge variant={value as any}>{value}</Badge>,
-    },
-    {
-      key: "sortOrder",
-      label: "Urutan",
-      className: "text-center",
-    },
-    {
-      key: "actions",
-      label: "Aksi",
-      render: (_: any, row: OrganizationPosition) => (
+  const toggleCategory = (categoryId: string) => {
+    const newExpanded = new Set(expandedCategories);
+    if (newExpanded.has(categoryId)) {
+      newExpanded.delete(categoryId);
+    } else {
+      newExpanded.add(categoryId);
+    }
+    setExpandedCategories(newExpanded);
+  };
+
+  const NodeCard = ({ item, index }: { item: OrganizationPosition; index: number }) => (
+    <div className={`bg-white rounded-lg px-6 py-3 shadow-sm border-2 ${
+      item.colorTheme || "border-green-400"
+    } ${item.backgroundStyle || ""}`}>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-3">
+          <GripVertical className="h-5 w-5 text-gray-400" />
+          <div>
+            <div className="font-bold text-darken">{item.title}</div>
+            {item.personName && (
+              <div className="text-sm text-gray-600">{item.personName}</div>
+            )}
+          </div>
+        </div>
         <div className="flex items-center space-x-2">
+          <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">#{item.sortOrder}</span>
           <button
             type="button"
-            onClick={() => handleEdit(row)}
+            onClick={() => handleEdit(item)}
             className="p-1.5 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-md transition-colors"
             title="Edit"
           >
@@ -198,53 +222,95 @@ export default function OrganizationPositionsPage() {
           </button>
           <button
             type="button"
-            onClick={() => handleDelete(row)}
+            onClick={() => handleDelete(item)}
             className="p-1.5 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-md transition-colors"
             title="Hapus"
           >
             <Trash2 className="h-4 w-4" />
           </button>
         </div>
-      ),
-      className: "text-right",
-    },
-  ];
+      </div>
+    </div>
+  );
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Kelola Struktur Organisasi</h1>
-          <p className="text-gray-600">Kelola struktur organisasi sekolah</p>
+          <p className="text-gray-600">Kelola struktur organisasi sekolah sesuai bagian-bagian</p>
         </div>
-        <Button onClick={handleAdd}>
+        <Button onClick={() => handleAdd("staff")}>
           <Plus className="h-4 w-4 mr-2" />
-          Tambah Baru
+          Tambah Posisi
         </Button>
       </div>
 
-      <FilterTabs
-        tabs={categoryOptions.map((cat) => ({
-          ...cat,
-          count: cat.id === "all" ? items.length : items.filter((i) => i.roleCategory === cat.id).length,
-        }))}
-        activeTab={selectedCategory}
-        onTabChange={setSelectedCategory}
-      />
+      <div className="space-y-4">
+        {categories.map((category) => {
+          const categoryItems = getItemsByCategory(category.id);
+          const isExpanded = expandedCategories.has(category.id);
+          const isFull = categoryItems.length >= category.maxItems;
 
-      <DataTable
-        data={filteredItems}
-        columns={columns}
-        loading={loading}
-        searchQuery={searchQuery}
-        onSearchChange={handleSearch}
-        searchPlaceholder="Cari posisi..."
-        emptyState={{
-          title: "Tidak ada data",
-          description: "Belum ada posisi organisasi. Silakan tambah baru.",
-          action: { label: "Tambah Posisi", onClick: handleAdd },
-        }}
-      />
+          return (
+            <div key={category.id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+              <div
+                onClick={() => toggleCategory(category.id)}
+                className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer"
+              >
+                <div className="flex items-center space-x-4">
+                  {isExpanded ? <ChevronDown className="h-5 w-5 text-gray-500" /> : <ChevronRight className="h-5 w-5 text-gray-500" />}
+                  <div className="text-left">
+                    <h3 className="font-bold text-lg text-gray-900">{category.label}</h3>
+                    <p className="text-sm text-gray-500">{category.description}</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <span className={`text-sm px-3 py-1 rounded-full ${isFull ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"}`}>
+                    {categoryItems.length} / {category.maxItems}
+                  </span>
+                  {!isFull && (
+                    <Button
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAdd(category.id);
+                      }}
+                    >
+                      <Plus className="h-4 w-4 mr-1" />
+                      Tambah
+                    </Button>
+                  )}
+                </div>
+              </div>
+
+              {isExpanded && (
+                <div className="border-t border-gray-200 p-4">
+                  <div className="space-y-3">
+                    {categoryItems.length === 0 ? (
+                      <div className="text-center py-8 text-gray-500 bg-gray-50 rounded-lg">
+                        Belum ada posisi di kategori ini
+                      </div>
+                    ) : (
+                      categoryItems.map((item, index) => (
+                        <NodeCard key={item.id} item={item} index={index} />
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
 
       <ModalForm
         open={showModal}
@@ -291,20 +357,25 @@ export default function OrganizationPositionsPage() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Kategori
+              Kategori*
             </label>
             <select
               value={formData.roleCategory}
-              onChange={(e) =>
-                setFormData({ ...formData, roleCategory: e.target.value as any })
-              }
+              onChange={(e) => {
+                const category = e.target.value as any;
+                setFormData({
+                  ...formData,
+                  roleCategory: category,
+                  backgroundStyle: category === "leadership" ? "bg-gradient-to-r from-green-600 to-green-400 text-white" : undefined,
+                });
+              }}
               className="w-full h-8 px-3 py-2 text-xs border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
             >
-              <option value="supervisory">Pengawas</option>
-              <option value="leadership">Pimpinan</option>
-              <option value="staff">Staf</option>
-              <option value="teaching">Guru</option>
-              <option value="lab_manager">Kepala Lab</option>
+              <option value="supervisory">Pengawas (KEMENAG, KOMITE, DINAS)</option>
+              <option value="leadership">Pimpinan (KETUA YAYASAN, KEPALA MADRASAH)</option>
+              <option value="staff">Staf (Tata Usaha, Wakamad, dll)</option>
+              <option value="lab_manager">Kepala Lab (Lab IPA, Lab Komputer)</option>
+              <option value="teaching">Dewan Guru (Wali Kelas)</option>
             </select>
           </div>
 
@@ -333,6 +404,14 @@ export default function OrganizationPositionsPage() {
               />
             </div>
           </div>
+
+          {formData.roleCategory === "leadership" && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
+              <p className="text-sm text-yellow-800">
+                Catatan: Posisi ini akan memiliki background gradient hijau di tampilan publik.
+              </p>
+            </div>
+          )}
         </div>
       </ModalForm>
 

@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { Upload, X, Image as ImageIcon, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { authFetch } from "@/lib/auth";
 
 interface ImageUploadProps {
   value?: string;
@@ -34,7 +35,7 @@ export function ImageUpload({ value, onChange, disabled = false, className }: Im
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await fetch("/api/admin/upload", {
+      const response = await authFetch("/api/upload", {
         method: "POST",
         body: formData,
       });

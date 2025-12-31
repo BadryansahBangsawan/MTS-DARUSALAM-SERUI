@@ -8,7 +8,6 @@ interface OrganizationNode {
   title: string;
   subtitle?: string;
   color?: string;
-  gridCols?: string;
   border?: string;
 }
 
@@ -52,7 +51,7 @@ export default function OrganizationChart() {
         title: p.title,
         subtitle: p.personName || undefined,
         border: p.colorTheme || "border-green-300",
-        color: p.backgroundStyle || undefined,
+        color: p.backgroundStyle || "",
       }));
   };
 
@@ -109,9 +108,16 @@ export default function OrganizationChart() {
     subtitle: kepalaMadrasah?.personName || undefined,
   };
 
+  if (positions.length === 0) {
+    return (
+      <div className="text-center py-20 text-gray-500">
+        Belum ada struktur organisasi.
+      </div>
+    );
+  }
+
   return (
     <div className="relative w-full min-h-full">
-      {/* ISI TETAP */}
       <div className="flex flex-col items-center space-y-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 justify-center mb-2 w-full max-w-4xl">
           {nodes.map((node, index) => (
@@ -196,12 +202,6 @@ export default function OrganizationChart() {
             <Node key={index} node={kelas} delay={1.1 + index * 0.05} />
           ))}
         </div>
-
-        {positions.length === 0 && (
-          <div className="text-center py-20 text-gray-500">
-            Belum ada struktur organisasi.
-          </div>
-        )}
       </div>
     </div>
   );

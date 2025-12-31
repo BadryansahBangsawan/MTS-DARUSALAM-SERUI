@@ -3,6 +3,7 @@ import { mysqlTable, varchar, text, int, timestamp, boolean, decimal, json, mysq
 export const users = mysqlTable('users', {
   id: int('id').primaryKey().autoincrement(),
   email: varchar('email', { length: 255 }).notNull().unique(),
+  username: varchar('username', { length: 255 }).notNull().unique(),
   passwordHash: varchar('password_hash', { length: 255 }).notNull(),
   name: varchar('name', { length: 255 }).notNull(),
   role: mysqlEnum('role', ['admin', 'staff']).notNull().default('admin'),
@@ -11,6 +12,7 @@ export const users = mysqlTable('users', {
   lastLogin: timestamp('last_login'),
 }, (table) => ({
   emailIdx: uniqueIndex('email_idx').on(table.email),
+  usernameIdx: uniqueIndex('username_idx').on(table.username),
 }));
 
 export const sessions = mysqlTable('sessions', {
@@ -28,6 +30,7 @@ export const schoolInformation = mysqlTable('school_information', {
   id: int('id').primaryKey().autoincrement(),
   name: varchar('name', { length: 255 }).notNull(),
   description: text('description'),
+  heroImage: varchar('hero_image', { length: 500 }),
   principalName: varchar('principal_name', { length: 255 }),
   principalTitle: varchar('principal_title', { length: 255 }),
   principalImage: varchar('principal_image', { length: 500 }),

@@ -151,6 +151,14 @@ export default function Footer() {
                 Mata Pelajaran
               </Link>
             </li>
+            <li>
+              <Link
+                href="/admin"
+                className="hover:underline text-gray-300"
+              >
+                Admin
+              </Link>
+            </li>
           </ul>
         </div>
       </div>

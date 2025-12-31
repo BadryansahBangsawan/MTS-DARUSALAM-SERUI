@@ -8,6 +8,7 @@ import { ConfirmDialog } from "@/components/admin/confirm-dialog";
 import { ImageUpload } from "@/components/admin/image-upload";
 import { DynamicList } from "@/components/admin/dynamic-list";
 import { ColorPicker } from "@/components/admin/color-picker";
+import { authFetch } from "@/lib/auth";
 import { RatingPicker } from "@/components/admin/rating-picker";
 import { StatusToggle } from "@/components/admin/status-toggle";
 import { Badge } from "@/components/admin/badge";
@@ -68,7 +69,7 @@ export default function EkstrakurikulerPage() {
 
   const fetchItems = async () => {
     try {
-      const response = await fetch("/api/ekstrakurikuler");
+      const response = await authFetch("/api/ekstrakurikuler");
       const data = await response.json();
       if (data.success) {
         // Parse JSON fields from strings
@@ -139,7 +140,7 @@ export default function EkstrakurikulerPage() {
     if (!deletingItem) return;
 
     try {
-      const response = await fetch(`/api/ekstrakurikuler/${deletingItem.id}`, {
+      const response = await authFetch(`/api/ekstrakurikuler/${deletingItem.id}`, {
         method: "DELETE",
       });
       if (response.ok) {
@@ -166,7 +167,7 @@ export default function EkstrakurikulerPage() {
         : "/api/ekstrakurikuler";
       const method = editingItem ? "PUT" : "POST";
 
-      const response = await fetch(url, {
+      const response = await authFetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

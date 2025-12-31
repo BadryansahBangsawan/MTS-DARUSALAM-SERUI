@@ -30,10 +30,14 @@ export async function POST(request: NextRequest) {
     const filename = generateUniqueFilename(file.name);
     const filepath = join(uploadsDir, filename);
 
+    console.log("Saving file to:", filepath);
+
     await mkdir(uploadsDir, { recursive: true });
     await writeFile(filepath, buffer);
 
     const fileUrl = `/uploads/${filename}`;
+
+    console.log("File saved successfully:", fileUrl);
 
     return NextResponse.json({
       success: true,
@@ -43,7 +47,10 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Upload error:", error);
     return NextResponse.json(
-      { success: false, error: "Gagal mengupload file" },
+      {
+        success: false,
+        error: error instanceof Error ? error.message : "Gagal mengupload file"
+      },
       { status: 500 }
     );
   }

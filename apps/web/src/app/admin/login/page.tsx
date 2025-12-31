@@ -4,11 +4,12 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Lock, User, ArrowLeft } from "lucide-react";
+import { setAuthToken } from "@/lib/auth";
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("admin@mtsdarussalam.sch.id");
-  const [password, setPassword] = useState("admin123");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
@@ -23,21 +24,21 @@ export default function AdminLoginPage() {
     setError("");
     setSuccess(false);
 
-    if (!email || !password) {
-      setError("Email dan password harus diisi");
+    if (!username || !password) {
+      setError("Username dan password harus diisi");
       setLoading(false);
       return;
     }
 
     try {
-      console.log("Attempting login with:", email);
-      
+      console.log("Attempting login with:", username);
+
       const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ username, password }),
         credentials: "include",
       });
 
@@ -50,7 +51,11 @@ export default function AdminLoginPage() {
       if (data.success) {
         console.log("✅ Login successful!");
         setSuccess(true);
-        
+
+        if (data.token) {
+          setAuthToken(data.token);
+        }
+
         setTimeout(() => {
           console.log("Redirecting to /admin");
           window.location.href = "/admin";
@@ -64,7 +69,7 @@ export default function AdminLoginPage() {
       if (err.message) {
         console.error("Error message:", err.message);
       }
-      if (err.message && err.message.includes('Failed to fetch')) {
+      if (err.message && err.message.includes("Failed to fetch")) {
         setError("Gagal terhubung ke server. Pastikan dev server berjalan.");
       } else {
         setError("Terjadi kesalahan saat login. Coba lagi.");
@@ -91,9 +96,7 @@ export default function AdminLoginPage() {
               alt="Logo MTS Darrusalam"
               className="mx-auto h-20 w-auto mb-4"
             />
-            <h2 className="text-3xl font-bold text-gray-900">
-              Admin Login
-            </h2>
+            <h2 className="text-3xl font-bold text-gray-900">Admin Login</h2>
             <p className="mt-2 text-gray-600">
               Masuk ke dashboard admin MTs Darussalam
             </p>
@@ -115,28 +118,33 @@ export default function AdminLoginPage() {
 
           <form className="space-y-6" onSubmit={handleLogin}>
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email
+              <label
+                htmlFor="username"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Username
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <User className="h-5 w-5 text-gray-400" />
                 </div>
                 <input
-                  id="email"
-                  type="email"
+                  id="username"
+                  type="text"
                   required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 focus:outline-none"
-                  placeholder="admin@mtsdarussalam.sch.id"
                   disabled={loading}
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Password
               </label>
               <div className="relative">
@@ -150,7 +158,6 @@ export default function AdminLoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 focus:outline-none"
-                  placeholder="•••••••"
                   disabled={loading}
                 />
               </div>
@@ -164,12 +171,6 @@ export default function AdminLoginPage() {
               {loading ? "Memproses..." : "Masuk"}
             </button>
           </form>
-
-          <div className="mt-6 text-center text-sm text-gray-600 bg-gray-50 rounded-lg p-4">
-            <p className="font-semibold mb-2">Default Login:</p>
-            <p>Email: <span className="font-mono bg-white px-2 py-1 rounded border">admin@mtsdarussalam.sch.id</span></p>
-            <p className="mt-1">Password: <span className="font-mono bg-white px-2 py-1 rounded border">admin123</span></p>
-          </div>
         </div>
       </div>
     </div>

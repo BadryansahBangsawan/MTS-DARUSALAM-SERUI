@@ -51,3 +51,42 @@ export function extractTokenFromRequest(request: Request): string | null {
 
   return null;
 }
+
+export function getAuthToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  return sessionStorage.getItem('auth_token');
+}
+
+export function setAuthToken(token: string): void {
+  if (typeof window === 'undefined') return;
+  sessionStorage.setItem('auth_token', token);
+}
+
+export function removeAuthToken(): void {
+  if (typeof window === 'undefined') return;
+  sessionStorage.removeItem('auth_token');
+}
+
+export async function authFetch(url: string, options: RequestInit = {}): Promise<Response> {
+  const token = getAuthToken();
+
+  const headers: Record<string, string> = {};
+
+  if (options.headers) {
+    Object.assign(headers, options.headers);
+  }
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const isFormData = options.body instanceof FormData;
+  if (!isFormData && !headers['Content-Type']) {
+    headers['Content-Type'] = 'application/json';
+  }
+
+  return fetch(url, {
+    ...options,
+    headers,
+  });
+}

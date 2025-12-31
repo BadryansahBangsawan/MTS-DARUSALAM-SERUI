@@ -8,6 +8,20 @@
       "when": 1767130673273,
       "tag": "0000_freezing_cardiac",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1767212160497,
+      "tag": "0001_jittery_ultimates",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1767212478494,
+      "tag": "0002_add_username",
+      "breakpoints": true
     }
   ]
 }

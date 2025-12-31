@@ -5,7 +5,7 @@ import { Play } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function Hero() {
-  const [data, setData] = useState<{ name?: string; description?: string; whatsappRegistration?: string }>({});
+  const [data, setData] = useState<{ name?: string; description?: string; whatsappRegistration?: string; heroImage?: string }>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -26,6 +26,7 @@ export default function Hero() {
   const schoolName = data.name || "MTs Darussalam";
   const description = data.description || "MTs Darussalam adalah sekolah Islam setingkat SMP yang siap membimbing kamu dengan metode pembelajaran modern dan islami";
   const whatsappNumber = data.whatsappRegistration || "6281354155066";
+  const heroImageUrl = data.heroImage || "/Putra.png";
 
   return (
     <div id="home" className="bg-cream scroll-mt-28">
@@ -94,7 +95,7 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             className="w-10/12 mx-auto 2xl:-mb-0"
-            src="/Putra.png"
+            src={heroImageUrl}
             alt="Siswa MTs Darussalam"
             data-aos="fade-up"
             data-aos-once="true"

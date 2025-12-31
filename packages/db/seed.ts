@@ -16,14 +16,22 @@ async function seed() {
 
   const connection = await mysql.createConnection(DATABASE_URL);
 
+  // Add username column if not exists
+  console.log('📝 Adding username column to users table...');
+  try {
+    await connection.execute(`ALTER TABLE users ADD COLUMN IF NOT EXISTS username varchar(255) NOT NULL`);
+  } catch (err) {
+    console.log('   (Column may already exist, continuing...)');
+  }
+
   // Seed Admin User
   console.log('📝 Seeding admin user...');
-  const adminPassword = await hashPassword('admin123');
+  const adminPassword = await hashPassword('Semangat Guruku');
   await connection.execute(
-    `INSERT INTO users (email, password_hash, name, role) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE password_hash = VALUES(password_hash), name = VALUES(name)`,
-    ['admin@mtsdarussalam.sch.id', adminPassword, 'Super Admin', 'admin']
+    `INSERT INTO users (email, username, password_hash, name, role) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE username = VALUES(username), password_hash = VALUES(password_hash), name = VALUES(name)`,
+    ['admin@mtsdarussalam.sch.id', 'GURUHEBAT', adminPassword, 'Super Admin', 'admin']
   );
-  console.log('✅ Admin user created: admin@mtsdarussalam.sch.id\n');
+  console.log('✅ Admin user created: GURUHEBAT\n');
 
   // Seed School Information
   console.log('📝 Seeding school information...');

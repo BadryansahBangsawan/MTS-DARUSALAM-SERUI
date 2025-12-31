@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import { Save, RefreshCw, Check } from "lucide-react";
 import { ImageUpload } from "@/components/admin/image-upload";
 import { Button } from "@/components/ui/button";
+import { authFetch } from "@/lib/auth";
 
 interface SchoolInformationData {
   name?: string;
   description?: string;
+  heroImage?: string;
   principalName?: string;
   principalTitle?: string;
   principalImage?: string;
@@ -31,6 +33,7 @@ export default function SchoolInformationPage() {
   const [data, setData] = useState<SchoolInformationData>({
     name: "",
     description: "",
+    heroImage: "",
     principalName: "",
     principalTitle: "",
     principalImage: "",
@@ -60,7 +63,7 @@ export default function SchoolInformationPage() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const response = await fetch("/api/school-information");
+      const response = await authFetch("/api/school-information");
       if (!response.ok) {
         console.error("API error:", response.status);
         return;
@@ -86,12 +89,12 @@ export default function SchoolInformationPage() {
       // Handle operatingHours
       try {
         if (item.operatingHours) {
-          if (typeof item.operatingHours === 'object') {
+          if (typeof item.operatingHours === "object") {
             operatingHoursWeekdays = item.operatingHours.weekdays || "";
             operatingHoursSaturday = item.operatingHours.saturday || "";
-          } else if (typeof item.operatingHours === 'string') {
+          } else if (typeof item.operatingHours === "string") {
             const parsed = JSON.parse(item.operatingHours);
-            if (parsed && typeof parsed === 'object') {
+            if (parsed && typeof parsed === "object") {
               operatingHoursWeekdays = parsed.weekdays || "";
               operatingHoursSaturday = parsed.saturday || "";
             }
@@ -104,13 +107,13 @@ export default function SchoolInformationPage() {
       // Handle socialMedia
       try {
         if (item.socialMedia) {
-          if (typeof item.socialMedia === 'object') {
+          if (typeof item.socialMedia === "object") {
             socialMediaFacebook = item.socialMedia.facebook || "";
             socialMediaInstagram = item.socialMedia.instagram || "";
             socialMediaYoutube = item.socialMedia.youtube || "";
-          } else if (typeof item.socialMedia === 'string') {
+          } else if (typeof item.socialMedia === "string") {
             const parsed = JSON.parse(item.socialMedia);
-            if (parsed && typeof parsed === 'object') {
+            if (parsed && typeof parsed === "object") {
               socialMediaFacebook = parsed.facebook || "";
               socialMediaInstagram = parsed.instagram || "";
               socialMediaYoutube = parsed.youtube || "";
@@ -132,6 +135,7 @@ export default function SchoolInformationPage() {
       setData({
         name: item.name || "",
         description: item.description || "",
+        heroImage: item.heroImage || "",
         principalName: item.principalName || "",
         principalTitle: item.principalTitle || "",
         principalImage: item.principalImage || "",
@@ -151,7 +155,10 @@ export default function SchoolInformationPage() {
         averageApplicantsPerYear: item.averageApplicantsPerYear || 63,
       });
     } catch (error) {
-      console.error("Error fetching data:", error instanceof Error ? error.message : String(error));
+      console.error(
+        "Error fetching data:",
+        error instanceof Error ? error.message : String(error)
+      );
     } finally {
       setLoading(false);
     }
@@ -170,6 +177,7 @@ export default function SchoolInformationPage() {
       const payload = {
         name: data.name,
         description: data.description,
+        heroImage: data.heroImage,
         principalName: data.principalName,
         principalTitle: data.principalTitle,
         principalImage: data.principalImage,
@@ -195,9 +203,8 @@ export default function SchoolInformationPage() {
 
       console.log("Saving payload:", payload);
 
-      const response = await fetch("/api/school-information", {
+      const response = await authFetch("/api/school-information", {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
@@ -212,7 +219,8 @@ export default function SchoolInformationPage() {
       }
     } catch (error) {
       console.error("Error saving data:", error);
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       alert("Gagal menyimpan data: " + errorMessage);
     } finally {
       setSaving(false);
@@ -235,8 +243,10 @@ export default function SchoolInformationPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Informasi Sekolah</h1>
-          <p className="text-gray-600">Kelola informasi sekolah MTs Darussalam</p>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Informasi Sekolah
+          </h1>
+          <p className="text-gray-600">Dibuat Oleh Badryansah Bangsawan</p>
         </div>
         <div className="flex items-center space-x-3">
           <Button variant="outline" onClick={fetchData}>
@@ -244,7 +254,11 @@ export default function SchoolInformationPage() {
             Refresh
           </Button>
           <Button onClick={handleSave} disabled={saving}>
-            {saveSuccess ? <Check className="h-4 w-4 mr-2" /> : <Save className="h-4 w-4 mr-2" />}
+            {saveSuccess ? (
+              <Check className="h-4 w-4 mr-2" />
+            ) : (
+              <Save className="h-4 w-4 mr-2" />
+            )}
             {saving ? "Menyimpan..." : saveSuccess ? "Tersimpan!" : "Simpan"}
           </Button>
         </div>
@@ -252,7 +266,9 @@ export default function SchoolInformationPage() {
 
       <div className="space-y-6">
         <div className="bg-white rounded-lg shadow-sm p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Hero Section</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            Tampilan awal
+          </h2>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -280,12 +296,23 @@ export default function SchoolInformationPage() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
+                Foto Hero Section
+              </label>
+              <ImageUpload
+                value={data.heroImage}
+                onChange={(heroImage) => handleChange("heroImage", heroImage)}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 WhatsApp Pendaftaran
               </label>
               <input
                 type="text"
                 value={data.whatsappRegistration || ""}
-                onChange={(e) => handleChange("whatsappRegistration", e.target.value)}
+                onChange={(e) =>
+                  handleChange("whatsappRegistration", e.target.value)
+                }
                 className="w-full h-8 px-3 py-2 text-xs border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
                 placeholder="628123456789"
               />
@@ -294,7 +321,9 @@ export default function SchoolInformationPage() {
         </div>
 
         <div className="bg-white rounded-lg shadow-sm p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Visi & Misi Section</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            Visi & Misi
+          </h2>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -324,7 +353,7 @@ export default function SchoolInformationPage() {
         </div>
 
         <div className="bg-white rounded-lg shadow-sm p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Video Section</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Video</h2>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -333,7 +362,9 @@ export default function SchoolInformationPage() {
               <input
                 type="url"
                 value={data.youtubeVideoUrl || ""}
-                onChange={(e) => handleChange("youtubeVideoUrl", e.target.value)}
+                onChange={(e) =>
+                  handleChange("youtubeVideoUrl", e.target.value)
+                }
                 className="w-full h-8 px-3 py-2 text-xs border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
                 placeholder="https://youtu.be/..."
               />
@@ -342,7 +373,9 @@ export default function SchoolInformationPage() {
         </div>
 
         <div className="bg-white rounded-lg shadow-sm p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Kepala Sekolah & Statistik</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            Kepala Sekolah & Statistik
+          </h2>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -374,7 +407,9 @@ export default function SchoolInformationPage() {
               </label>
               <ImageUpload
                 value={data.principalImage}
-                onChange={(principalImage) => handleChange("principalImage", principalImage)}
+                onChange={(principalImage) =>
+                  handleChange("principalImage", principalImage)
+                }
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -386,7 +421,9 @@ export default function SchoolInformationPage() {
                   type="number"
                   min="0"
                   value={data.totalStudents || 0}
-                  onChange={(e) => handleChange("totalStudents", parseInt(e.target.value) || 0)}
+                  onChange={(e) =>
+                    handleChange("totalStudents", parseInt(e.target.value) || 0)
+                  }
                   className="w-full h-8 px-3 py-2 text-xs border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
                 />
               </div>
@@ -398,7 +435,12 @@ export default function SchoolInformationPage() {
                   type="number"
                   min="0"
                   value={data.averageApplicantsPerYear || 0}
-                  onChange={(e) => handleChange("averageApplicantsPerYear", parseInt(e.target.value) || 0)}
+                  onChange={(e) =>
+                    handleChange(
+                      "averageApplicantsPerYear",
+                      parseInt(e.target.value) || 0
+                    )
+                  }
                   className="w-full h-8 px-3 py-2 text-xs border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
                 />
               </div>
@@ -407,7 +449,9 @@ export default function SchoolInformationPage() {
         </div>
 
         <div className="bg-white rounded-lg shadow-sm p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Footer - Kontak & Info</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            Kontak & Info
+          </h2>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -455,7 +499,9 @@ export default function SchoolInformationPage() {
                 <input
                   type="text"
                   value={data.operatingHoursWeekdays || ""}
-                  onChange={(e) => handleChange("operatingHoursWeekdays", e.target.value)}
+                  onChange={(e) =>
+                    handleChange("operatingHoursWeekdays", e.target.value)
+                  }
                   className="w-full h-8 px-3 py-2 text-xs border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
                   placeholder="07:00 - 14:00 WIT"
                 />
@@ -467,7 +513,9 @@ export default function SchoolInformationPage() {
                 <input
                   type="text"
                   value={data.operatingHoursSaturday || ""}
-                  onChange={(e) => handleChange("operatingHoursSaturday", e.target.value)}
+                  onChange={(e) =>
+                    handleChange("operatingHoursSaturday", e.target.value)
+                  }
                   className="w-full h-8 px-3 py-2 text-xs border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
                   placeholder="07:00 - 12:00 WIT"
                 />
@@ -477,7 +525,9 @@ export default function SchoolInformationPage() {
         </div>
 
         <div className="bg-white rounded-lg shadow-sm p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Footer - Media Sosial</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            Media Sosial
+          </h2>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -486,7 +536,9 @@ export default function SchoolInformationPage() {
               <input
                 type="url"
                 value={data.socialMediaFacebook || ""}
-                onChange={(e) => handleChange("socialMediaFacebook", e.target.value)}
+                onChange={(e) =>
+                  handleChange("socialMediaFacebook", e.target.value)
+                }
                 className="w-full h-8 px-3 py-2 text-xs border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
                 placeholder="https://facebook.com/..."
               />
@@ -498,7 +550,9 @@ export default function SchoolInformationPage() {
               <input
                 type="url"
                 value={data.socialMediaInstagram || ""}
-                onChange={(e) => handleChange("socialMediaInstagram", e.target.value)}
+                onChange={(e) =>
+                  handleChange("socialMediaInstagram", e.target.value)
+                }
                 className="w-full h-8 px-3 py-2 text-xs border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
                 placeholder="https://instagram.com/..."
               />
@@ -510,7 +564,9 @@ export default function SchoolInformationPage() {
               <input
                 type="url"
                 value={data.socialMediaYoutube || ""}
-                onChange={(e) => handleChange("socialMediaYoutube", e.target.value)}
+                onChange={(e) =>
+                  handleChange("socialMediaYoutube", e.target.value)
+                }
                 className="w-full h-8 px-3 py-2 text-xs border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
                 placeholder="https://youtube.com/@..."
               />
@@ -520,8 +576,16 @@ export default function SchoolInformationPage() {
 
         <div className="flex justify-end">
           <Button onClick={handleSave} disabled={saving} size="lg">
-            {saveSuccess ? <Check className="h-4 w-4 mr-2" /> : <Save className="h-4 w-4 mr-2" />}
-            {saving ? "Menyimpan..." : saveSuccess ? "Tersimpan!" : "Simpan Semua Perubahan"}
+            {saveSuccess ? (
+              <Check className="h-4 w-4 mr-2" />
+            ) : (
+              <Save className="h-4 w-4 mr-2" />
+            )}
+            {saving
+              ? "Menyimpan..."
+              : saveSuccess
+              ? "Tersimpan!"
+              : "Simpan Semua Perubahan"}
           </Button>
         </div>
       </div>

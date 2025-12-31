@@ -7,14 +7,14 @@ import { verifyPassword, generateToken } from '@/lib/auth';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { email, password } = body;
+    const { username, password } = body;
 
-    console.log('[POST /api/auth/login] Login attempt for:', email);
+    console.log('[POST /api/auth/login] Login attempt for:', username);
 
-    if (!email || !password) {
-      console.log('[POST /api/auth/login] Missing email or password');
+    if (!username || !password) {
+      console.log('[POST /api/auth/login] Missing username or password');
       return NextResponse.json(
-        { success: false, error: 'Email dan password diperlukan' },
+        { success: false, error: 'Username dan password diperlukan' },
         { status: 400 }
       );
     }
@@ -22,12 +22,12 @@ export async function POST(request: NextRequest) {
     const [user] = await db
       .select()
       .from(users)
-      .where(eq(users.email, email));
+      .where(eq(users.username, username));
 
     if (!user) {
       console.log('[POST /api/auth/login] User not found');
       return NextResponse.json(
-        { success: false, error: 'Email atau password salah' },
+        { success: false, error: 'Username atau password salah' },
         { status: 401 }
       );
     }
@@ -77,15 +77,9 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    response.cookies.set('auth_token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7,
-      path: '/',
-    });
 
-    console.log('[POST /api/auth/login] Login successful, cookie set');
+
+    console.log('[POST /api/auth/login] Login successful');
 
     return response;
   } catch (error) {
