@@ -18,20 +18,22 @@ export function RatingPicker({ value, onChange, readonly = false, className }: R
           onClick={() => !readonly && onChange(star)}
           disabled={readonly}
           className={cn(
-            "transition-colors focus:outline-none",
+            "transition-all duration-200 focus:outline-none group",
             readonly && "cursor-default"
           )}
         >
           <Star
             className={cn(
-              "h-5 w-5",
-              star <= value ? "fill-yellow-400 text-yellow-400" : "fill-gray-200 text-gray-200"
+              "h-6 w-6 transition-all duration-200 group-hover:scale-110",
+              star <= value
+                ? "fill-amber-400 text-amber-400 drop-shadow-lg"
+                : "fill-slate-200 text-slate-200 hover:fill-slate-300 hover:text-slate-300"
             )}
           />
         </button>
       ))}
-      <span className="ml-2 text-xs text-gray-600">
-        {value} dari 5
+      <span className="ml-3 text-sm font-semibold text-slate-600 bg-slate-100 px-3 py-1 rounded-lg">
+        {value} / 5
       </span>
     </div>
   );

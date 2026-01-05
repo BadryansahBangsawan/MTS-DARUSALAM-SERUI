@@ -37,10 +37,10 @@ export function DynamicList({ value = [], onChange, placeholder = "Tambah item..
   };
 
   return (
-    <div className={cn("space-y-2", className)}>
+    <div className={cn("space-y-3", className)}>
       {items.map((item, index) => (
-        <div key={index} className="flex items-center space-x-2">
-          <GripVertical className="h-5 w-5 text-gray-300 flex-shrink-0 cursor-move" />
+        <div key={index} className="flex items-center space-x-3 group">
+          <GripVertical className="h-5 w-5 text-slate-300 flex-shrink-0 cursor-move hover:text-slate-400 transition-colors" />
           {renderItem ? (
             <div className="flex-1">{renderItem(item, index)}</div>
           ) : (
@@ -49,13 +49,13 @@ export function DynamicList({ value = [], onChange, placeholder = "Tambah item..
               value={item}
               onChange={(e) => handleChange(index, e.target.value)}
               placeholder={`${placeholder} ${index + 1}`}
-              className="flex-1 h-8 px-3 py-2 text-xs border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
+              className="flex-1 h-10 px-4 text-sm border border-slate-200/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
             />
           )}
           <button
             type="button"
             onClick={() => handleRemove(index)}
-            className="p-1.5 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-md transition-colors"
+            className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all duration-200"
           >
             <Trash2 className="h-4 w-4" />
           </button>
@@ -64,9 +64,9 @@ export function DynamicList({ value = [], onChange, placeholder = "Tambah item..
       <button
         type="button"
         onClick={handleAdd}
-        className="flex items-center space-x-2 text-xs text-green-600 hover:text-green-700 px-3 py-2 rounded-md hover:bg-green-50 transition-colors"
+        className="flex items-center space-x-2 text-sm font-medium text-emerald-600 hover:text-emerald-700 px-4 py-2.5 rounded-xl hover:bg-emerald-50 transition-all duration-200 group"
       >
-        <Plus className="h-4 w-4" />
+        <Plus className="h-4 w-4 group-hover:scale-110 transition-transform" />
         <span>Tambah Item</span>
       </button>
     </div>

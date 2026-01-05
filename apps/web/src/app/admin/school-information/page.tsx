@@ -49,8 +49,8 @@ export default function SchoolInformationPage() {
     socialMediaInstagram: "",
     socialMediaYoutube: "",
     youtubeVideoUrl: "",
-    totalStudents: 190,
-    averageApplicantsPerYear: 63,
+    totalStudents: 0,
+    averageApplicantsPerYear: 0,
   });
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -151,8 +151,8 @@ export default function SchoolInformationPage() {
         socialMediaInstagram,
         socialMediaYoutube,
         youtubeVideoUrl: item.youtubeVideoUrl || "",
-        totalStudents: item.totalStudents || 190,
-        averageApplicantsPerYear: item.averageApplicantsPerYear || 63,
+        totalStudents: item.totalStudents || 0,
+        averageApplicantsPerYear: item.averageApplicantsPerYear || 0,
       });
     } catch (error) {
       console.error(
@@ -197,8 +197,8 @@ export default function SchoolInformationPage() {
           youtube: data.socialMediaYoutube || "",
         },
         youtubeVideoUrl: data.youtubeVideoUrl,
-        totalStudents: data.totalStudents || 190,
-        averageApplicantsPerYear: data.averageApplicantsPerYear || 63,
+        totalStudents: data.totalStudents || 0,
+        averageApplicantsPerYear: data.averageApplicantsPerYear || 0,
       };
 
       console.log("Saving payload:", payload);

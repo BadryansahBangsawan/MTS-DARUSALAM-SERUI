@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { Check, X } from "lucide-react";
 
 interface StatusToggleProps {
   checked: boolean;
@@ -10,14 +11,14 @@ interface StatusToggleProps {
 
 export function StatusToggle({ checked, onChange, label, disabled = false, className }: StatusToggleProps) {
   return (
-    <div className={cn("flex items-center space-x-2", className)}>
+    <div className={cn("flex items-center space-x-3", className)}>
       <button
         type="button"
         onClick={() => onChange(!checked)}
         disabled={disabled}
         className={cn(
-          "relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2",
-          checked ? "bg-green-500" : "bg-gray-200",
+          "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 shadow-sm",
+          checked ? "bg-gradient-to-r from-emerald-500 to-emerald-600 border-emerald-500" : "bg-slate-200 border-slate-200",
           disabled && "opacity-50 cursor-not-allowed"
         )}
         role="switch"
@@ -26,13 +27,15 @@ export function StatusToggle({ checked, onChange, label, disabled = false, class
         <span
           aria-hidden="true"
           className={cn(
-            "pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
-            checked ? "translate-x-4" : "translate-x-0"
+            "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg transition duration-200 ease-in-out flex items-center justify-center",
+            checked ? "translate-x-5" : "translate-x-0"
           )}
-        />
+        >
+          {checked && <Check className="h-3 w-3 text-emerald-500" />}
+        </span>
       </button>
       {label && (
-        <span className="text-xs text-gray-700">
+        <span className={cn("text-sm font-medium transition-colors", checked ? "text-emerald-600" : "text-slate-500")}>
           {checked ? "Aktif" : "Tidak Aktif"}
         </span>
       )}

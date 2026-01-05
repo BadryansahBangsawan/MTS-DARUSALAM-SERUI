@@ -52,9 +52,13 @@ export default function VisiMisi() {
     );
   }
 
-  const visionText = data.vision || "Menjadi Madrasah Tsanawiyah yang unggul dalam prestasi, berkarakter Islami, dan berwawasan global.";
-  const missionText = data.mission || "Menyelenggarakan pendidikan Islam yang berkualitas, membentuk siswa yang beriman, bertakwa, berakhlak mulia, dan mampu bersaing di era global.";
-  const descriptionText = data.description || "MTs Darussalam berkomitmen menciptakan lingkungan belajar yang islami, modern, dan didukung fasilitas lengkap demi menunjang proses pembelajaran yang efektif, efisien, dan berkualitas.";
+  const visionText = data.vision || "";
+  const missionText = data.mission || "";
+  const descriptionText = data.description || "";
+
+  if (!visionText && !missionText) {
+    return null;
+  }
 
   return (
     <>

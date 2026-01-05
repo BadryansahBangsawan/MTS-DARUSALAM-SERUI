@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Loader2 } from "lucide-react";
+import { X, Loader2, AlertTriangle, Info, AlertCircle, CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -36,40 +36,55 @@ export function ConfirmDialog({
 
   const variantStyles = {
     danger: {
-      bgClass: "bg-red-500",
-      hoverClass: "hover:bg-red-600",
+      bgClass: "from-red-500 to-rose-600",
+      hoverClass: "hover:from-red-600 hover:to-rose-700",
+      icon: AlertTriangle,
+      iconBg: "bg-red-100",
+      iconColor: "text-red-600",
     },
     warning: {
-      bgClass: "bg-yellow-500",
-      hoverClass: "hover:bg-yellow-600",
+      bgClass: "from-amber-500 to-orange-600",
+      hoverClass: "hover:from-amber-600 hover:to-orange-700",
+      icon: AlertCircle,
+      iconBg: "bg-amber-100",
+      iconColor: "text-amber-600",
     },
     info: {
-      bgClass: "bg-blue-500",
-      hoverClass: "hover:bg-blue-600",
+      bgClass: "from-blue-500 to-cyan-600",
+      hoverClass: "hover:from-blue-600 hover:to-cyan-700",
+      icon: Info,
+      iconBg: "bg-blue-100",
+      iconColor: "text-blue-600",
     },
   };
 
   const styles = variantStyles[variant];
+  const Icon = styles.icon;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-      <div className="bg-white rounded-lg shadow-lg max-w-md w-full">
-        <div className="p-6">
-          <div className="flex items-start justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">
-              {title}
-            </h3>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={loading ? undefined : onClose} />
+      <div className="relative bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl max-w-md w-full border border-slate-200/60 animate-in fade-in zoom-in duration-200">
+        <div className="p-8">
+          <div className="flex items-start justify-between mb-6">
+            <div className={`w-14 h-14 ${styles.iconBg} rounded-2xl flex items-center justify-center`}>
+              <Icon className={`h-7 w-7 ${styles.iconColor}`} />
+            </div>
             <button
               type="button"
               onClick={onClose}
               disabled={loading}
-              className="text-gray-400 hover:text-gray-600 disabled:opacity-50"
+              className="p-2 rounded-xl hover:bg-slate-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed group"
             >
-              <X className="h-5 w-5" />
+              <X className="h-5 w-5 text-slate-400 group-hover:text-slate-600" />
             </button>
           </div>
 
-          <p className="text-sm text-gray-600 mb-6">
+          <h3 className="text-xl font-bold text-slate-900 mb-3">
+            {title}
+          </h3>
+
+          <p className="text-sm text-slate-600 mb-8 leading-relaxed">
             {message}
           </p>
 
@@ -79,12 +94,13 @@ export function ConfirmDialog({
               variant="outline"
               onClick={onClose}
               disabled={loading}
+              className="bg-white/80 backdrop-blur-sm border-slate-200/60 hover:bg-slate-50"
             >
               {cancelText}
             </Button>
             <Button
               type="button"
-              className={cn(styles.bgClass, styles.hoverClass)}
+              className={cn("bg-gradient-to-r", styles.bgClass, styles.hoverClass, "shadow-lg shadow-red-500/30")}
               onClick={handleConfirm}
               disabled={loading}
             >

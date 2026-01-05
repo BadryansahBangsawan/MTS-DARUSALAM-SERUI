@@ -1,11 +1,11 @@
 export function validateImageFile(file: File): { valid: boolean; error?: string } {
-  const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"];
+  const allowedTypes = ["image/png"];
   const maxSize = 5 * 1024 * 1024;
 
   if (!allowedTypes.includes(file.type)) {
     return {
       valid: false,
-      error: "Hanya file JPG, PNG, WEBP, dan GIF yang diizinkan.",
+      error: "Hanya file PNG yang diizinkan. Format sama dengan foto asli.",
     };
   }
 
@@ -22,7 +22,7 @@ export function validateImageFile(file: File): { valid: boolean; error?: string 
 export function generateUniqueFilename(originalName: string): string {
   const timestamp = Date.now();
   const random = Math.random().toString(36).substring(2, 15);
-  const extension = originalName.split(".").pop();
+  const extension = "png";
   return `${timestamp}-${random}.${extension}`;
 }
 
@@ -42,12 +42,4 @@ export function extractYouTubeId(url: string): string | null {
   }
 
   return null;
-}
-
-export function buildYouTubeEmbedUrl(videoId: string): string {
-  return `https://www.youtube.com/embed/${videoId}`;
-}
-
-export function buildYouTubeThumbnailUrl(videoId: string, quality: "maxresdefault" | "hqdefault" | "mqdefault" = "hqdefault"): string {
-  return `https://img.youtube.com/vi/${videoId}/${quality}.jpg`;
 }

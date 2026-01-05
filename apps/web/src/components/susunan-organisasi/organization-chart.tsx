@@ -15,7 +15,12 @@ interface OrganizationPosition {
   id: number;
   title: string;
   personName?: string;
-  roleCategory: "supervisory" | "leadership" | "staff" | "teaching" | "lab_manager";
+  roleCategory:
+    | "supervisory"
+    | "leadership"
+    | "staff"
+    | "teaching"
+    | "lab_manager";
   sortOrder: number;
   colorTheme?: string;
   backgroundStyle?: string;
@@ -94,18 +99,14 @@ export default function OrganizationChart() {
   const waliKelas = getNodes("teaching");
 
   const ketuaYayasan = positions.find((p) => p.title === "KETUA YAYASAN");
-  const kepalaMadrasah = positions.find((p) => p.title === "KEPALA MADRASAH");
 
   const ketuaYayasanNode: OrganizationNode = {
     title: ketuaYayasan?.title || "KETUA YAYASAN",
     subtitle: ketuaYayasan?.personName || undefined,
-    color: ketuaYayasan?.backgroundStyle || "bg-gradient-to-r from-green-600 to-green-400 text-white",
+    color:
+      ketuaYayasan?.backgroundStyle ||
+      "bg-gradient-to-r from-green-600 to-green-400 text-white",
     border: ketuaYayasan?.colorTheme,
-  };
-
-  const kepalaMadrasahNode: OrganizationNode = {
-    title: kepalaMadrasah?.title || "KEPALA MADRASAH",
-    subtitle: kepalaMadrasah?.personName || undefined,
   };
 
   if (positions.length === 0) {
@@ -117,7 +118,7 @@ export default function OrganizationChart() {
   }
 
   return (
-    <div className="relative w-full min-h-full">
+    <div className="relative w-full min-h-full bg-cream">
       <div className="flex flex-col items-center space-y-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 justify-center mb-2 w-full max-w-4xl">
           {nodes.map((node, index) => (
@@ -129,10 +130,6 @@ export default function OrganizationChart() {
 
         <div className="flex justify-center">
           <Node node={ketuaYayasanNode} delay={0.3} />
-        </div>
-
-        <div className="flex flex-col items-center">
-          <Node node={kepalaMadrasahNode} delay={0.4} />
         </div>
 
         <div

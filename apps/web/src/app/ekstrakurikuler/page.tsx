@@ -4,20 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import EkstrakurikulerCard from "@/components/ekstrakurikuler/ekstrakurikuler-card";
-
-interface Ekstrakurikuler {
-  id: string;
-  name: string;
-  subtitle: string;
-  icon: string;
-  color: string;
-  description: string;
-  features: Array<{ icon: string; text: string }>;
-  schedule: Array<{ day: string; time: string }>;
-  rating: number;
-  whatsappContact: string;
-  isActive: boolean;
-}
+import type { Ekstrakurikuler } from "@/types/ekstrakurikuler";
 
 export default function EkstrakurikulerPage() {
   const [items, setItems] = useState<Ekstrakurikuler[]>([]);
@@ -86,7 +73,7 @@ export default function EkstrakurikulerPage() {
           data-aos="fade-up"
         >
           {items.map((ekstra) => (
-            <EkstrakurikulerCard key={ekstra.id} {...ekstra} whatsapp={ekstra.whatsappContact} />
+            <EkstrakurikulerCard key={ekstra.id} {...ekstra} whatsapp={ekstra.whatsapp || ekstra.whatsappContact || ""} />
           ))}
         </motion.div>
 

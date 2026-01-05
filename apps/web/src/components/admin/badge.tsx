@@ -2,21 +2,21 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
-  "inline-flex items-center px-2 py-1 rounded-full text-xs font-medium",
+  "inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-semibold shadow-sm",
   {
     variants: {
       variant: {
-        pending: "bg-yellow-100 text-yellow-800",
-        approved: "bg-green-100 text-green-800",
-        rejected: "bg-red-100 text-red-800",
-        featured: "bg-purple-100 text-purple-800",
-        active: "bg-blue-100 text-blue-800",
-        inactive: "bg-gray-100 text-gray-800",
-        religious: "bg-green-100 text-green-800",
-        language: "bg-blue-100 text-blue-800",
-        science: "bg-indigo-100 text-indigo-800",
-        social: "bg-orange-100 text-orange-800",
-        skills: "bg-pink-100 text-pink-800",
+        pending: "bg-amber-100 text-amber-700 border border-amber-200/60",
+        approved: "bg-emerald-100 text-emerald-700 border border-emerald-200/60",
+        rejected: "bg-red-100 text-red-700 border border-red-200/60",
+        featured: "bg-violet-100 text-violet-700 border border-violet-200/60",
+        active: "bg-emerald-50 text-emerald-700 border border-emerald-200/60",
+        inactive: "bg-slate-100 text-slate-600 border border-slate-200/60",
+        religious: "bg-emerald-50 text-emerald-700 border border-emerald-200/60",
+        language: "bg-cyan-50 text-cyan-700 border border-cyan-200/60",
+        science: "bg-indigo-50 text-indigo-700 border border-indigo-200/60",
+        social: "bg-orange-50 text-orange-700 border border-orange-200/60",
+        skills: "bg-pink-50 text-pink-700 border border-pink-200/60",
       },
     },
     defaultVariants: {

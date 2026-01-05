@@ -194,12 +194,13 @@ async function seed() {
     { title: 'WALI KELAS IX B', personName: 'Irwan, S.Pd', roleCategory: 'teaching', sortOrder: 21, colorTheme: 'border-green-300' },
   ];
 
+  await connection.execute(`DELETE FROM organization_positions`);
+
   for (const org of organizationData) {
     const values = [org.title, org.personName ?? null, org.roleCategory, org.sortOrder, org.colorTheme ?? null, org.backgroundStyle ?? null];
     await connection.execute(
-      `INSERT INTO organization_positions (title, person_name, role_category, sort_order, color_theme, background_style) 
-       VALUES (?, ?, ?, ?, ?, ?) 
-       ON DUPLICATE KEY UPDATE title = VALUES(title), person_name = VALUES(person_name)`,
+      `INSERT INTO organization_positions (title, person_name, role_category, sort_order, color_theme, background_style)
+       VALUES (?, ?, ?, ?, ?, ?)`,
       values
     );
     console.log(`✅ Position created: ${org.title}`);
@@ -256,6 +257,113 @@ async function seed() {
     console.log(`✅ Feature created: ${feature.title}`);
   }
   console.log('');
+
+  // Seed OSIS
+  console.log('📝 Seeding OSIS...');
+  try {
+    await connection.execute(`CREATE TABLE IF NOT EXISTS osis (
+      id int AUTO_INCREMENT PRIMARY KEY,
+      title varchar(255),
+      description text,
+      image varchar(500),
+      is_active boolean DEFAULT true,
+      created_at timestamp NOT NULL DEFAULT (now()),
+      updated_at timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP
+    )`);
+  } catch (err) {
+    console.log('   (Table may already exist, continuing...)');
+  }
+  await connection.execute(
+    `INSERT INTO osis (title, description, image, is_active)
+     VALUES (?, ?, ?, ?)
+     ON DUPLICATE KEY UPDATE title = VALUES(title), description = VALUES(description)`,
+    [
+      'OSIS',
+      'OSIS MTs Darussalam adalah wadah kepemimpinan siswa yang aktif, kreatif, dan bertanggung jawab dalam menyelenggarakan kegiatan sekolah serta menumbuhkan jiwa organisasi sejak dini.',
+      '/osis.png',
+      true,
+    ]
+  );
+  console.log('✅ OSIS created\n');
+
+  // Seed Environment Features
+  console.log('📝 Seeding environment features...');
+  try {
+    await connection.execute(`ALTER TABLE environment_features ADD COLUMN IF NOT EXISTS image varchar(500)`);
+  } catch (err) {
+    console.log('   (Column may already exist, continuing...)');
+  }
+  await connection.execute(
+    `INSERT INTO environment_features (title, description, image, features, is_active)
+     VALUES (?, ?, ?, ?, ?)
+     ON DUPLICATE KEY UPDATE title = VALUES(title), description = VALUES(description), image = VALUES(image), features = VALUES(features)`,
+    [
+      'lingkungan Belajar Nyaman & Interaktif',
+      'MTs Darussalam menyediakan lingkungan belajar yang kondusif, modern, dan mendukung perkembangan siswa.',
+      '/vcall.png',
+      JSON.stringify([
+        { icon: 'Grid2x2', title: 'Guru Berpengalaman', description: 'Guru-guru berpengalaman siap membimbing siswa secara langsung di kelas' },
+        { icon: 'Layers', title: 'Metode Interaktif', description: 'Metode pengajaran interaktif untuk meningkatkan pemahaman siswa' },
+        { icon: 'Users', title: 'Perhatian Penuh', description: 'Setiap siswa diperhatikan perkembangan akademik dan akhlaknya' },
+      ]),
+      true,
+    ]
+  );
+  console.log('✅ Environment Features created\n');
+
+  // Seed Personal Approach
+  console.log('📝 Seeding personal approach...');
+  try {
+    await connection.execute(`ALTER TABLE personal_approach ADD COLUMN IF NOT EXISTS image varchar(500)`);
+  } catch (err) {
+    console.log('   (Column may already exist, continuing...)');
+  }
+  await connection.execute(
+    `INSERT INTO personal_approach (title, description, image, points, is_active)
+     VALUES (?, ?, ?, ?, ?)
+     ON DUPLICATE KEY UPDATE title = VALUES(title), description = VALUES(description), image = VALUES(image), points = VALUES(points)`,
+    [
+      'Pendekatan Personal untuk Setiap Siswa',
+      'Guru di MTs Darussalam memberikan perhatian khusus kepada setiap siswa melalui bimbingan pribadi.',
+      '/Guru.png',
+      JSON.stringify([
+        { icon: 'HeartHandshake', title: 'Bimbingan Pribadi', description: 'Guru memberikan perhatian khusus kepada setiap siswa melalui bimbingan pribadi' },
+        { icon: 'BookOpen', title: 'Perkembangan Akademik', description: 'Membantu perkembangan akademik siswa secara menyeluruh' },
+        { icon: 'Star', title: 'Perkembangan Karakter', description: 'Membangun karakter siswa yang berkualitas dan berintegritas' },
+      ]),
+      true,
+    ]
+  );
+  console.log('✅ Personal Approach created\n');
+
+  // Seed Video Section
+  console.log('📝 Seeding video section...');
+  try {
+    await connection.execute(`CREATE TABLE IF NOT EXISTS video_section (
+      id int AUTO_INCREMENT PRIMARY KEY,
+      title varchar(255),
+      description text,
+      video_url varchar(500),
+      thumbnail varchar(500),
+      is_active boolean DEFAULT true,
+      created_at timestamp NOT NULL DEFAULT (now()),
+      updated_at timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP
+    )`);
+  } catch (err) {
+    console.log('   (Table may already exist, continuing...)');
+  }
+  await connection.execute(
+    `INSERT INTO video_section (title, description, video_url, is_active)
+     VALUES (?, ?, ?, ?)
+     ON DUPLICATE KEY UPDATE title = VALUES(title), description = VALUES(description), video_url = VALUES(video_url)`,
+    [
+      'Video Profil Sekolah',
+      'Kenali lebih dekat MTs Darussalam melalui video profil kami.',
+      'https://www.youtube.com/embed/84rxYQ-JbS4',
+      true,
+    ]
+  );
+  console.log('✅ Video Section created\n');
 
   // Seed Testimonials
   console.log('📝 Seeding testimonials...');

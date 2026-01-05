@@ -14,8 +14,8 @@ export default function PrincipalWelcome() {
   }>({});
   const [loading, setLoading] = useState(true);
 
-  const studentCounter = useCounterAnimation(data.totalStudents || 190, 1200);
-  const applicantCounter = useCounterAnimation(data.averageApplicantsPerYear || 63, 1200);
+  const studentCounter = useCounterAnimation(data.totalStudents || 0, 1200);
+  const applicantCounter = useCounterAnimation(data.averageApplicantsPerYear || 0, 1200);
 
   useEffect(() => {
     fetch("/api/school-information")
@@ -67,9 +67,13 @@ export default function PrincipalWelcome() {
     );
   }
 
-  const principalName = data.principalName || "Drs. H. Muchtar";
-  const principalTitle = data.principalTitle || "Kepala Sekolah MTs Darussalam";
-  const principalImage = data.principalImage || "/Muhktar.png";
+  const principalName = data.principalName || "";
+  const principalTitle = data.principalTitle || "";
+  const principalImage = data.principalImage || "";
+
+  if (!principalName) {
+    return null;
+  }
 
   return (
     <div className="flex flex-col md:flex-row items-center md:items-start md:space-x-16 mt-20">

@@ -1,7 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Pencil, Trash2, Plus, GripVertical, ChevronDown, ChevronRight } from "lucide-react";
+import {
+  Pencil,
+  Trash2,
+  Plus,
+  GripVertical,
+  ChevronDown,
+  ChevronRight,
+} from "lucide-react";
 import { ModalForm } from "@/components/admin/modal-form";
 import { ConfirmDialog } from "@/components/admin/confirm-dialog";
 import { ColorPicker } from "@/components/admin/color-picker";
@@ -12,7 +19,12 @@ interface OrganizationPosition {
   id: number;
   title: string;
   personName?: string;
-  roleCategory: "supervisory" | "leadership" | "staff" | "teaching" | "lab_manager";
+  roleCategory:
+    | "supervisory"
+    | "leadership"
+    | "staff"
+    | "teaching"
+    | "lab_manager";
   sortOrder?: number;
   colorTheme?: string;
   backgroundStyle?: string;
@@ -69,8 +81,12 @@ export default function OrganizationPositionsPage() {
   const [items, setItems] = useState<OrganizationPosition[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [editingItem, setEditingItem] = useState<OrganizationPosition | null>(null);
-  const [deletingItem, setDeletingItem] = useState<OrganizationPosition | null>(null);
+  const [editingItem, setEditingItem] = useState<OrganizationPosition | null>(
+    null
+  );
+  const [deletingItem, setDeletingItem] = useState<OrganizationPosition | null>(
+    null
+  );
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     title: "",
@@ -79,7 +95,9 @@ export default function OrganizationPositionsPage() {
     sortOrder: 0,
     colorTheme: "green",
   });
-  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set(categories.map(c => c.id)));
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
+    new Set(categories.map((c) => c.id))
+  );
 
   useEffect(() => {
     fetchItems();
@@ -114,7 +132,10 @@ export default function OrganizationPositionsPage() {
       roleCategory: category,
       sortOrder: categoryItems.length,
       colorTheme: category === "supervisory" ? "green" : "green",
-      backgroundStyle: category === "leadership" ? "bg-gradient-to-r from-green-600 to-green-400 text-white" : undefined,
+      backgroundStyle:
+        category === "leadership"
+          ? "bg-gradient-to-r from-green-600 to-green-400 text-white"
+          : undefined,
     });
     setShowModal(true);
   };
@@ -140,9 +161,12 @@ export default function OrganizationPositionsPage() {
     if (!deletingItem) return;
 
     try {
-      const response = await authFetch(`/api/organization-positions/${deletingItem.id}`, {
-        method: "DELETE",
-      });
+      const response = await authFetch(
+        `/api/organization-positions/${deletingItem.id}`,
+        {
+          method: "DELETE",
+        }
+      );
       if (response.ok) {
         setItems(items.filter((i) => i.id !== deletingItem.id));
         setDeletingItem(null);
@@ -196,10 +220,18 @@ export default function OrganizationPositionsPage() {
     setExpandedCategories(newExpanded);
   };
 
-  const NodeCard = ({ item, index }: { item: OrganizationPosition; index: number }) => (
-    <div className={`bg-white rounded-lg px-6 py-3 shadow-sm border-2 ${
-      item.colorTheme || "border-green-400"
-    } ${item.backgroundStyle || ""}`}>
+  const NodeCard = ({
+    item,
+    index,
+  }: {
+    item: OrganizationPosition;
+    index: number;
+  }) => (
+    <div
+      className={`bg-white rounded-lg px-6 py-3 shadow-sm border-2 ${
+        item.colorTheme || "border-green-400"
+      } ${item.backgroundStyle || ""}`}
+    >
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <GripVertical className="h-5 w-5 text-gray-400" />
@@ -211,7 +243,9 @@ export default function OrganizationPositionsPage() {
           </div>
         </div>
         <div className="flex items-center space-x-2">
-          <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">#{item.sortOrder}</span>
+          <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+            #{item.sortOrder}
+          </span>
           <button
             type="button"
             onClick={() => handleEdit(item)}
@@ -245,8 +279,12 @@ export default function OrganizationPositionsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Kelola Struktur Organisasi</h1>
-          <p className="text-gray-600">Kelola struktur organisasi sekolah sesuai bagian-bagian</p>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Kelola Struktur Organisasi
+          </h1>
+          <p className="text-gray-600">
+            Kelola struktur organisasi sekolah sesuai bagian-bagian
+          </p>
         </div>
         <Button onClick={() => handleAdd("staff")}>
           <Plus className="h-4 w-4 mr-2" />
@@ -261,20 +299,37 @@ export default function OrganizationPositionsPage() {
           const isFull = categoryItems.length >= category.maxItems;
 
           return (
-            <div key={category.id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <div
+              key={category.id}
+              className=" rounded-lg shadow-sm border border-gray-200 overflow-hidden"
+            >
               <div
                 onClick={() => toggleCategory(category.id)}
                 className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer"
               >
                 <div className="flex items-center space-x-4">
-                  {isExpanded ? <ChevronDown className="h-5 w-5 text-gray-500" /> : <ChevronRight className="h-5 w-5 text-gray-500" />}
+                  {isExpanded ? (
+                    <ChevronDown className="h-5 w-5 text-gray-500" />
+                  ) : (
+                    <ChevronRight className="h-5 w-5 text-gray-500" />
+                  )}
                   <div className="text-left">
-                    <h3 className="font-bold text-lg text-gray-900">{category.label}</h3>
-                    <p className="text-sm text-gray-500">{category.description}</p>
+                    <h3 className="font-bold text-lg text-gray-900">
+                      {category.label}
+                    </h3>
+                    <p className="text-sm text-gray-500">
+                      {category.description}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <span className={`text-sm px-3 py-1 rounded-full ${isFull ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"}`}>
+                  <span
+                    className={`text-sm px-3 py-1 rounded-full ${
+                      isFull
+                        ? "bg-red-100 text-red-700"
+                        : "bg-green-100 text-green-700"
+                    }`}
+                  >
                     {categoryItems.length} / {category.maxItems}
                   </span>
                   {!isFull && (
@@ -336,7 +391,9 @@ export default function OrganizationPositionsPage() {
             <input
               type="text"
               value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, title: e.target.value })
+              }
               className="w-full h-8 px-3 py-2 text-xs border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
               placeholder="Judul posisi"
             />
@@ -349,7 +406,9 @@ export default function OrganizationPositionsPage() {
             <input
               type="text"
               value={formData.personName}
-              onChange={(e) => setFormData({ ...formData, personName: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, personName: e.target.value })
+              }
               className="w-full h-8 px-3 py-2 text-xs border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
               placeholder="Nama orang"
             />
@@ -366,15 +425,24 @@ export default function OrganizationPositionsPage() {
                 setFormData({
                   ...formData,
                   roleCategory: category,
-                  backgroundStyle: category === "leadership" ? "bg-gradient-to-r from-green-600 to-green-400 text-white" : undefined,
+                  backgroundStyle:
+                    category === "leadership"
+                      ? "bg-gradient-to-r from-green-600 to-green-400 text-white"
+                      : undefined,
                 });
               }}
               className="w-full h-8 px-3 py-2 text-xs border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
             >
-              <option value="supervisory">Pengawas (KEMENAG, KOMITE, DINAS)</option>
-              <option value="leadership">Pimpinan (KETUA YAYASAN, KEPALA MADRASAH)</option>
+              <option value="supervisory">
+                Pengawas (KEMENAG, KOMITE, DINAS)
+              </option>
+              <option value="leadership">
+                Pimpinan (KETUA YAYASAN, KEPALA MADRASAH)
+              </option>
               <option value="staff">Staf (Tata Usaha, Wakamad, dll)</option>
-              <option value="lab_manager">Kepala Lab (Lab IPA, Lab Komputer)</option>
+              <option value="lab_manager">
+                Kepala Lab (Lab IPA, Lab Komputer)
+              </option>
               <option value="teaching">Dewan Guru (Wali Kelas)</option>
             </select>
           </div>
@@ -389,7 +457,10 @@ export default function OrganizationPositionsPage() {
                 min="0"
                 value={formData.sortOrder}
                 onChange={(e) =>
-                  setFormData({ ...formData, sortOrder: parseInt(e.target.value) || 0 })
+                  setFormData({
+                    ...formData,
+                    sortOrder: parseInt(e.target.value) || 0,
+                  })
                 }
                 className="w-full h-8 px-3 py-2 text-xs border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
               />
@@ -400,7 +471,9 @@ export default function OrganizationPositionsPage() {
               </label>
               <ColorPicker
                 value={formData.colorTheme}
-                onChange={(colorTheme) => setFormData({ ...formData, colorTheme })}
+                onChange={(colorTheme) =>
+                  setFormData({ ...formData, colorTheme })
+                }
               />
             </div>
           </div>
@@ -408,7 +481,8 @@ export default function OrganizationPositionsPage() {
           {formData.roleCategory === "leadership" && (
             <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
               <p className="text-sm text-yellow-800">
-                Catatan: Posisi ini akan memiliki background gradient hijau di tampilan publik.
+                Catatan: Posisi ini akan memiliki background gradient hijau di
+                tampilan publik.
               </p>
             </div>
           )}

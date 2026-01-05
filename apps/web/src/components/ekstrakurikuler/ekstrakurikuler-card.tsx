@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import * as LucideIcons from "lucide-react";
 import { Star } from "lucide-react";
-import type { Ekstrakurikuler } from "@/data/ekstrakurikuler";
+import type { Ekstrakurikuler } from "@/types/ekstrakurikuler";
 
 interface EkstrakurikulerCardProps extends Ekstrakurikuler {}
 

@@ -151,21 +151,11 @@ export const visiMisi = mysqlTable('visi_misi', {
   updatedAt: timestamp('updated_at').notNull().defaultNow().onUpdateNow(),
 });
 
-export const videoSection = mysqlTable('video_section', {
-  id: int('id').primaryKey().autoincrement(),
-  title: varchar('title', { length: 255 }),
-  description: text('description'),
-  videoUrl: varchar('video_url', { length: 500 }),
-  thumbnail: varchar('thumbnail', { length: 500 }),
-  isActive: boolean('is_active').default(true),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().defaultNow().onUpdateNow(),
-});
-
 export const environmentFeatures = mysqlTable('environment_features', {
   id: int('id').primaryKey().autoincrement(),
   title: varchar('title', { length: 255 }),
   description: text('description'),
+  image: varchar('image', { length: 500 }),
   features: json('features').$type<Array<{ icon: string; title: string; description: string }>>(),
   isActive: boolean('is_active').default(true),
   createdAt: timestamp('created_at').notNull().defaultNow(),
@@ -187,8 +177,63 @@ export const personalApproach = mysqlTable('personal_approach', {
   id: int('id').primaryKey().autoincrement(),
   title: varchar('title', { length: 255 }),
   description: text('description'),
+  image: varchar('image', { length: 500 }),
   points: json('points').$type<Array<{ title: string; description: string; icon: string }>>(),
   isActive: boolean('is_active').default(true),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow().onUpdateNow(),
 });
+
+export const osis = mysqlTable('osis', {
+  id: int('id').primaryKey().autoincrement(),
+  title: varchar('title', { length: 255 }),
+  description: text('description'),
+  image: varchar('image', { length: 500 }),
+  isActive: boolean('is_active').default(true),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow().onUpdateNow(),
+});
+
+export const guruDanStaf = mysqlTable('guru_dan_staf', {
+  id: int('id').primaryKey().autoincrement(),
+  nama: varchar('nama', { length: 255 }).notNull(),
+  kategori: mysqlEnum('kategori', ['pimpinan', 'wakamad', 'unit_penunjang', 'pembina_ekstra', 'wali_kelas', 'tenaga_kependidikan']).notNull(),
+  jabatan: varchar('jabatan', { length: 255 }).notNull(),
+  mataPelajaran: varchar('mata_pelajaran', { length: 255 }),
+  kelas: json('kelas').$type<string[]>(),
+  jamMengajar: int('jam_mengajar'),
+  totalBebanKerja: decimal('total_beban_kerja', { precision: 5, scale: 2 }),
+  sortOrder: int('sort_order').default(0),
+  colorTheme: varchar('color_theme', { length: 100 }),
+  backgroundStyle: varchar('background_style', { length: 255 }),
+  isActive: boolean('is_active').default(true),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow().onUpdateNow(),
+}, (table) => ({
+  kategoriIdx: index('kategori_idx').on(table.kategori),
+  isActiveIdx: index('is_active_idx').on(table.isActive),
+  sortOrderIdx: index('sort_order_idx').on(table.sortOrder),
+}));
+
+export const blogNews = mysqlTable('blog_news', {
+  id: int('id').primaryKey().autoincrement(),
+  title: varchar('title', { length: 255 }).notNull(),
+  slug: varchar('slug', { length: 255 }).notNull().unique(),
+  content: text('content').notNull(),
+  excerpt: varchar('excerpt', { length: 500 }),
+  featuredImage: varchar('featured_image', { length: 500 }),
+  category: mysqlEnum('category', ['berita', 'pengumuman', 'artikel', 'kegiatan']).notNull(),
+  authorId: int('author_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  isPublished: boolean('is_published').default(false),
+  publishedAt: timestamp('published_at'),
+  views: int('views').default(0),
+  isActive: boolean('is_active').default(true),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow().onUpdateNow(),
+}, (table) => ({
+  slugIdx: uniqueIndex('slug_idx').on(table.slug),
+  categoryIdx: index('category_idx').on(table.category),
+  authorIdx: index('author_idx').on(table.authorId),
+  isPublishedIdx: index('is_published_idx').on(table.isPublished),
+  isActiveIdx: index('is_active_idx').on(table.isActive),
+}));

@@ -48,7 +48,9 @@ export default function EkstrakurikulerPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState<Ekstrakurikuler | null>(null);
-  const [deletingItem, setDeletingItem] = useState<Ekstrakurikuler | null>(null);
+  const [deletingItem, setDeletingItem] = useState<Ekstrakurikuler | null>(
+    null
+  );
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -75,8 +77,14 @@ export default function EkstrakurikulerPage() {
         // Parse JSON fields from strings
         const parsedItems = (data.data || []).map((item: any) => ({
           ...item,
-          features: typeof item.features === 'string' ? JSON.parse(item.features) : (item.features || []),
-          schedule: typeof item.schedule === 'string' ? JSON.parse(item.schedule) : (item.schedule || []),
+          features:
+            typeof item.features === "string"
+              ? JSON.parse(item.features)
+              : item.features || [],
+          schedule:
+            typeof item.schedule === "string"
+              ? JSON.parse(item.schedule)
+              : item.schedule || [],
         }));
         setItems(parsedItems);
       }
@@ -91,9 +99,11 @@ export default function EkstrakurikulerPage() {
     setSearchQuery(query);
   };
 
-  const filteredItems = items.filter((item) =>
-    item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (item.subtitle && item.subtitle.toLowerCase().includes(searchQuery.toLowerCase()))
+  const filteredItems = items.filter(
+    (item) =>
+      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (item.subtitle &&
+        item.subtitle.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
   const handleAdd = () => {
@@ -140,9 +150,12 @@ export default function EkstrakurikulerPage() {
     if (!deletingItem) return;
 
     try {
-      const response = await authFetch(`/api/ekstrakurikuler/${deletingItem.id}`, {
-        method: "DELETE",
-      });
+      const response = await authFetch(
+        `/api/ekstrakurikuler/${deletingItem.id}`,
+        {
+          method: "DELETE",
+        }
+      );
       if (response.ok) {
         setItems(items.filter((i) => i.id !== deletingItem.id));
         setDeletingItem(null);
@@ -246,8 +259,12 @@ export default function EkstrakurikulerPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Kelola Ekstrakurikuler</h1>
-          <p className="text-gray-600">Kelola kegiatan ekstrakurikuler sekolah</p>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Kelola Ekstrakurikuler
+          </h1>
+          <p className="text-gray-600">
+            Kelola kegiatan ekstrakurikuler sekolah
+          </p>
         </div>
         <Button onClick={handleAdd}>
           <Plus className="h-4 w-4 mr-2" />
@@ -264,7 +281,8 @@ export default function EkstrakurikulerPage() {
         searchPlaceholder="Cari ekstrakurikuler..."
         emptyState={{
           title: "Tidak ada data",
-          description: "Belum ada kegiatan ekstrakurikuler. Silakan tambah baru.",
+          description:
+            "Belum ada kegiatan ekstrakurikuler. Silakan tambah baru.",
           action: { label: "Tambah Ekstrakurikuler", onClick: handleAdd },
         }}
       />
@@ -285,37 +303,41 @@ export default function EkstrakurikulerPage() {
           </div>
         }
       >
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
                 Nama*
               </label>
               <input
                 type="text"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full h-8 px-3 py-2 text-xs border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+                className="w-full h-11 px-4 text-sm border border-slate-200/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
                 placeholder="Nama ekstrakurikuler"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
                 Subtitle
               </label>
               <input
                 type="text"
                 value={formData.subtitle}
-                onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
-                className="w-full h-8 px-3 py-2 text-xs border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
+                onChange={(e) =>
+                  setFormData({ ...formData, subtitle: e.target.value })
+                }
+                className="w-full h-11 px-4 text-sm border border-slate-200/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
                 placeholder="Subtitle"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
                 Warna
               </label>
               <ColorPicker
@@ -324,7 +346,7 @@ export default function EkstrakurikulerPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
                 Rating
               </label>
               <RatingPicker
@@ -335,20 +357,22 @@ export default function EkstrakurikulerPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-slate-700 mb-2">
               Deskripsi
             </label>
             <textarea
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              rows={3}
-              className="w-full px-3 py-2 text-xs border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
+              rows={4}
+              className="w-full px-4 text-sm border border-slate-200/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all resize-none"
               placeholder="Deskripsi ekstrakurikuler"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-slate-700 mb-2">
               Fitur
             </label>
             <DynamicList
@@ -364,11 +388,13 @@ export default function EkstrakurikulerPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-slate-700 mb-2">
               Jadwal
             </label>
             <DynamicList
-              value={formData.schedule?.map((s) => `${s.day} - ${s.time}`) || []}
+              value={
+                formData.schedule?.map((s) => `${s.day} - ${s.time}`) || []
+              }
               onChange={(items) => {
                 const schedules = items.map((item) => {
                   const [day, time] = item.split(" - ");
@@ -380,16 +406,18 @@ export default function EkstrakurikulerPage() {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
                 WhatsApp
               </label>
               <input
                 type="text"
                 value={formData.whatsappContact}
-                onChange={(e) => setFormData({ ...formData, whatsappContact: e.target.value })}
-                className="w-full h-8 px-3 py-2 text-xs border border-input rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
+                onChange={(e) =>
+                  setFormData({ ...formData, whatsappContact: e.target.value })
+                }
+                className="w-full h-11 px-4 text-sm border border-slate-200/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
                 placeholder="628123456789"
               />
             </div>
