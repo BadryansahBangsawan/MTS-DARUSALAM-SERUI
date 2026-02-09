@@ -3,8 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Loader2, ChevronLeft, ChevronRight } from "lucide-react";
-import BlogNewsCard from "@/components/blog-news/blog-news-card";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface BlogNews {
   id: number;
@@ -110,14 +109,9 @@ export default function BlogNewsPreview() {
     setCurrentIndex(index);
   };
 
-  if (loading) {
-    return (
-      <div id="blog-news" className="mt-20 scroll-mt-28">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <Loader2 className="h-12 w-12 animate-spin text-green-500" />
-        </div>
-      </div>
-    );
+  // Sembunyikan seluruh section jika sedang loading atau tidak ada news
+  if (loading || items.length === 0) {
+    return null;
   }
 
   return (
@@ -137,8 +131,7 @@ export default function BlogNewsPreview() {
         </p>
       </motion.div>
 
-      {items.length > 0 && (
-        <motion.div
+      <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -270,18 +263,6 @@ export default function BlogNewsPreview() {
             </div>
           )}
         </motion.div>
-      )}
-
-      {items.length === 0 && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="text-center py-20"
-        >
-          <p className="text-gray-500">Belum ada blog news.</p>
-        </motion.div>
-      )}
 
       <motion.div
         initial={{ opacity: 0, y: 30 }}
