@@ -16,7 +16,6 @@ export default function Navbar() {
     { href: "/susunan-organisasi", label: "Susunan Organisasi" },
     { href: "/ekstrakurikuler", label: "Ekstrakurikuler" },
     { href: "/blog-news", label: "Blog & Berita" },
-    { href: "/testimonials/submit", label: "Kirim Testimoni", variant: "primary" },
   ];
 
   return (
