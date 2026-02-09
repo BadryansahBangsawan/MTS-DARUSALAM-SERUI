@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import { join } from "path";
+import { createClient } from "@supabase/supabase-js";
 import { validateImageFile, generateUniqueFilename } from "@/lib/upload-utils";
 
 export async function POST(request: NextRequest) {
@@ -23,25 +22,45 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !serviceRoleKey) {
+      return NextResponse.json(
+        { success: false, error: "Konfigurasi storage belum lengkap di server" },
+        { status: 500 }
+      );
+    }
+
+    const supabase = createClient(supabaseUrl, serviceRoleKey);
+
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-
-    const uploadsDir = join(process.cwd(), "public", "uploads");
     const filename = generateUniqueFilename(file.name);
-    const filepath = join(uploadsDir, filename);
+    const objectPath = `uploads/${filename}`;
 
-    console.log("Saving file to:", filepath);
+    const { error: uploadError } = await supabase.storage
+      .from("public-uploads")
+      .upload(objectPath, buffer, {
+        contentType: file.type,
+        upsert: true,
+      });
 
-    await mkdir(uploadsDir, { recursive: true });
-    await writeFile(filepath, buffer);
+    if (uploadError) {
+      console.error("Supabase upload error:", uploadError);
+      return NextResponse.json(
+        { success: false, error: "Gagal upload ke storage" },
+        { status: 500 }
+      );
+    }
 
-    const fileUrl = `/uploads/${filename}`;
-
-    console.log("File saved successfully:", fileUrl);
+    const { data } = supabase.storage
+      .from("public-uploads")
+      .getPublicUrl(objectPath);
 
     return NextResponse.json({
       success: true,
-      url: fileUrl,
+      url: data.publicUrl,
       filename,
     });
   } catch (error) {
@@ -49,7 +68,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Gagal mengupload file"
+        error: error instanceof Error ? error.message : "Gagal mengupload file",
       },
       { status: 500 }
     );

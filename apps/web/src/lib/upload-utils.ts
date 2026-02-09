@@ -1,11 +1,11 @@
 export function validateImageFile(file: File): { valid: boolean; error?: string } {
-  const allowedTypes = ["image/png"];
+  const allowedTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
   const maxSize = 5 * 1024 * 1024;
 
   if (!allowedTypes.includes(file.type)) {
     return {
       valid: false,
-      error: "Hanya file PNG yang diizinkan. Format sama dengan foto asli.",
+      error: "Format file harus PNG, JPG, atau WEBP.",
     };
   }
 
@@ -22,8 +22,9 @@ export function validateImageFile(file: File): { valid: boolean; error?: string 
 export function generateUniqueFilename(originalName: string): string {
   const timestamp = Date.now();
   const random = Math.random().toString(36).substring(2, 15);
-  const extension = "png";
-  return `${timestamp}-${random}.${extension}`;
+  const ext = originalName.split('.').pop()?.toLowerCase();
+  const safeExt = ext && ["png", "jpg", "jpeg", "webp"].includes(ext) ? ext : "png";
+  return `${timestamp}-${random}.${safeExt}`;
 }
 
 export function extractYouTubeId(url: string): string | null {

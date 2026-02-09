@@ -37,9 +37,18 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const result = await db.insert(ekstrakurikuler).values(body);
-    const created = await db.select().from(ekstrakurikuler).limit(1);
-    return NextResponse.json({ success: true, data: created[0] }, { status: 201 });
+
+    const id = body.id || String(body.name || "ekstra")
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '') || `ekstra-${Date.now()}`;
+
+    const payload = { ...body, id };
+
+    await db.insert(ekstrakurikuler).values(payload);
+    const [created] = await db.select().from(ekstrakurikuler).where(eq(ekstrakurikuler.id, id)).limit(1);
+    return NextResponse.json({ success: true, data: created }, { status: 201 });
   } catch (error) {
     console.error('Create ekstrakurikuler error:', error);
     return NextResponse.json(
