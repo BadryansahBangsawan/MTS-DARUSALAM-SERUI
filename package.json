@@ -28,13 +28,15 @@
     "@my-better-t-app/env": "workspace:*",
     "dotenv": "catalog:",
     "framer-motion": "^12.23.26",
+    "pg": "^8.18.0",
     "zod": "catalog:"
   },
   "devDependencies": {
-    "turbo": "^2.6.3",
-    "typescript": "catalog:",
+    "@my-better-t-app/config": "workspace:*",
     "@types/node": "^22.13.14",
-    "@my-better-t-app/config": "workspace:*"
+    "@types/pg": "^8.16.0",
+    "turbo": "^2.6.3",
+    "typescript": "catalog:"
   },
   "packageManager": "bun@1.3.5"
 }
