@@ -1,5 +1,15 @@
 {
   "$schema": "https://turborepo.org/schema.json",
+  "globalEnv": [
+    "DATABASE_URL",
+    "CORS_ORIGIN",
+    "NODE_ENV",
+    "JWT_SECRET",
+    "SUPABASE_URL",
+    "SUPABASE_ANON_KEY",
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY"
+  ],
   "tasks": {
     "dev": {
       "cache": false,
