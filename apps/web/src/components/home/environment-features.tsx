@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Grid2x2, Layers, Users } from "lucide-react";
 import { useEffect, useState } from "react";
+import dummyData from "@/lib/dummy-data.json";
 
 interface Feature {
   icon: string;
@@ -17,8 +18,8 @@ export default function EnvironmentFeatures() {
     image?: string;
     features?: Feature[];
     isActive?: boolean;
-  }>({});
-  const [loading, setLoading] = useState(true);
+  }>((dummyData.environmentFeatures || {}) as any);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetch("/api/environment-features")

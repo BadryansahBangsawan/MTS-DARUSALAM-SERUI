@@ -3,10 +3,11 @@
 import { motion } from "framer-motion";
 import { Play } from "lucide-react";
 import { useEffect, useState } from "react";
+import dummyData from "@/lib/dummy-data.json";
 
 export default function Hero() {
-  const [data, setData] = useState<{ name?: string; description?: string; whatsappRegistration?: string; heroImage?: string }>({});
-  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<{ name?: string; description?: string; whatsappRegistration?: string; heroImage?: string }>((dummyData.schoolInformation || {}) as any);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetch("/api/school-information")

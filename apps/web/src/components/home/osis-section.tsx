@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import dummyData from "@/lib/dummy-data.json";
 
 export default function OsissSection() {
   const [data, setData] = useState<{
@@ -9,8 +10,8 @@ export default function OsissSection() {
     description?: string;
     image?: string;
     isActive?: boolean;
-  }>({});
-  const [loading, setLoading] = useState(true);
+  }>((dummyData.osis || {}) as any);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetch("/api/osis")

@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import dummyData from "@/lib/dummy-data.json";
 
 interface BlogNews {
   id: number;
@@ -17,8 +18,8 @@ interface BlogNews {
 }
 
 export default function BlogNewsPreview() {
-  const [items, setItems] = useState<BlogNews[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [items, setItems] = useState<BlogNews[]>(((dummyData.blogNews as BlogNews[]) || []).slice(0, 3));
+  const [loading, setLoading] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0);
 

@@ -3,10 +3,11 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { extractYouTubeId } from "@/lib/upload-utils";
+import dummyData from "@/lib/dummy-data.json";
 
 export default function VideoSection() {
-  const [data, setData] = useState<{ youtubeVideoUrl?: string }>({});
-  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<{ youtubeVideoUrl?: string }>((dummyData.schoolInformation || {}) as any);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetch("/api/school-information")

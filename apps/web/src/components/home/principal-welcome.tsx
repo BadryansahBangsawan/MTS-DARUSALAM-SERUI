@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useCounterAnimation } from "@/hooks/useCounterAnimation";
+import dummyData from "@/lib/dummy-data.json";
 
 export default function PrincipalWelcome() {
   const [data, setData] = useState<{
@@ -11,8 +12,8 @@ export default function PrincipalWelcome() {
     principalImage?: string;
     totalStudents?: number;
     averageApplicantsPerYear?: number;
-  }>({});
-  const [loading, setLoading] = useState(true);
+  }>((dummyData.schoolInformation || {}) as any);
+  const [loading, setLoading] = useState(false);
 
   const studentCounter = useCounterAnimation(data.totalStudents || 0, 1200);
   const applicantCounter = useCounterAnimation(data.averageApplicantsPerYear || 0, 1200);

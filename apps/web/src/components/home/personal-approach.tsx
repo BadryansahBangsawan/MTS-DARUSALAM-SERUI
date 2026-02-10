@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import dummyData from "@/lib/dummy-data.json";
 
 interface Point {
   title: string;
@@ -16,8 +17,8 @@ export default function PersonalApproach() {
     image?: string;
     points?: Point[];
     isActive?: boolean;
-  }>({});
-  const [loading, setLoading] = useState(true);
+  }>((dummyData.personalApproach || {}) as any);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetch("/api/personal-approach")
@@ -71,7 +72,18 @@ export default function PersonalApproach() {
     return null;
   }
 
-  const points = data.points || [];
+  const points = Array.isArray(data.points)
+    ? data.points
+    : typeof data.points === "string"
+      ? (() => {
+          try {
+            const parsed = JSON.parse(data.points);
+            return Array.isArray(parsed) ? parsed : [];
+          } catch {
+            return [];
+          }
+        })()
+      : [];
   const image = data.image || "/Guru.png";
 
   console.log("Personal approach data:", data);

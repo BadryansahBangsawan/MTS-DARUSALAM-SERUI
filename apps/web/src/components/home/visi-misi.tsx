@@ -3,10 +3,11 @@
 import { motion } from "framer-motion";
 import { Eye, Target } from "lucide-react";
 import { useEffect, useState } from "react";
+import dummyData from "@/lib/dummy-data.json";
 
 export default function VisiMisi() {
-  const [data, setData] = useState<{ vision?: string; mission?: string; description?: string }>({});
-  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<{ vision?: string; mission?: string; description?: string }>((dummyData.schoolInformation || {}) as any);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetch("/api/school-information")

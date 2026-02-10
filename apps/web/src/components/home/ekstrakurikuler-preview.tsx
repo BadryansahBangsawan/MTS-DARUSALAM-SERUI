@@ -3,13 +3,34 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
 import EkstrakurikulerCard from "@/components/ekstrakurikuler/ekstrakurikuler-card";
 import type { Ekstrakurikuler } from "@/types/ekstrakurikuler";
+import dummyData from "@/lib/dummy-data.json";
+
+const safeParseArray = (value: any) => {
+  if (Array.isArray(value)) return value;
+  if (typeof value !== "string") return [];
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+};
+
+const normalizeItems = (raw: any[] = []) =>
+  raw
+    .map((item: any) => ({
+      ...item,
+      features: safeParseArray(item.features),
+      schedule: safeParseArray(item.schedule),
+      rating: parseFloat(item.rating || "0"),
+    }))
+    .filter((i: Ekstrakurikuler) => i.isActive ?? true);
 
 export default function EkstrakurikulerPreview() {
-  const [items, setItems] = useState<Ekstrakurikuler[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [items, setItems] = useState<Ekstrakurikuler[]>(normalizeItems((dummyData.ekstrakurikuler as any[]) || []).slice(0, 3));
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchItems();
@@ -20,14 +41,7 @@ export default function EkstrakurikulerPreview() {
       const response = await fetch("/api/ekstrakurikuler");
       const data = await response.json();
       if (data.success) {
-        const parsedItems = (data.data || []).map((item: any) => ({
-          ...item,
-          features: typeof item.features === 'string' ? JSON.parse(item.features) : (item.features || []),
-          schedule: typeof item.schedule === 'string' ? JSON.parse(item.schedule) : (item.schedule || []),
-          rating: parseFloat(item.rating || "0"),
-        }));
-        const activeItems = parsedItems.filter((i: Ekstrakurikuler) => i.isActive ?? true);
-        setItems(activeItems.slice(0, 3));
+        setItems(normalizeItems(data.data || []).slice(0, 3));
       }
     } catch (error) {
       console.error("Error fetching ekstrakurikuler:", error);
@@ -35,16 +49,6 @@ export default function EkstrakurikulerPreview() {
       setLoading(false);
     }
   };
-
-  if (loading) {
-    return (
-      <div id="ekstrakurikuler" className="mt-20 scroll-mt-28">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <Loader2 className="h-12 w-12 animate-spin text-green-500" />
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div id="ekstrakurikuler" className="mt-20 scroll-mt-28">

@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Quote, ChevronLeft, ChevronRight, Star, Image as ImageIcon, ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import dummyData from "@/lib/dummy-data.json";
 
 interface Testimonial {
   id: number;
@@ -18,8 +19,8 @@ interface Testimonial {
 }
 
 export default function Testimonials() {
-  const [items, setItems] = useState<Testimonial[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [items, setItems] = useState<Testimonial[]>(((dummyData.testimonials as Testimonial[]) || []));
+  const [loading, setLoading] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0);
 
