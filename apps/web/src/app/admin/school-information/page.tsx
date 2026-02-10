@@ -104,19 +104,20 @@ export default function SchoolInformationPage() {
         console.warn("Error parsing operatingHours:", e);
       }
 
-      // Handle socialMedia
+      // Handle socialMedia (camelCase/snake_case/string fallback)
       try {
-        if (item.socialMedia) {
-          if (typeof item.socialMedia === "object") {
-            socialMediaFacebook = item.socialMedia.facebook || "";
-            socialMediaInstagram = item.socialMedia.instagram || "";
-            socialMediaYoutube = item.socialMedia.youtube || "";
-          } else if (typeof item.socialMedia === "string") {
-            const parsed = JSON.parse(item.socialMedia);
+        const rawSocialMedia = item.socialMedia ?? item.social_media;
+        if (rawSocialMedia) {
+          if (typeof rawSocialMedia === "object") {
+            socialMediaFacebook = rawSocialMedia.facebook || rawSocialMedia.facebookUrl || "";
+            socialMediaInstagram = rawSocialMedia.instagram || rawSocialMedia.instagramUrl || "";
+            socialMediaYoutube = rawSocialMedia.youtube || rawSocialMedia.youtubeUrl || "";
+          } else if (typeof rawSocialMedia === "string") {
+            const parsed = JSON.parse(rawSocialMedia);
             if (parsed && typeof parsed === "object") {
-              socialMediaFacebook = parsed.facebook || "";
-              socialMediaInstagram = parsed.instagram || "";
-              socialMediaYoutube = parsed.youtube || "";
+              socialMediaFacebook = parsed.facebook || parsed.facebookUrl || "";
+              socialMediaInstagram = parsed.instagram || parsed.instagramUrl || "";
+              socialMediaYoutube = parsed.youtube || parsed.youtubeUrl || "";
             }
           }
         }

@@ -17,9 +17,41 @@ async function GET() {
   }
 }
 
+const parseMaybeJsonObject = (value: unknown): Record<string, any> => {
+  if (!value) return {};
+  if (typeof value === 'object' && !Array.isArray(value)) return value as Record<string, any>;
+  if (typeof value === 'string') {
+    try {
+      const parsed = JSON.parse(value);
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+        return parsed as Record<string, any>;
+      }
+    } catch {
+      return {};
+    }
+  }
+  return {};
+};
+
 async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
+
+    const rawOperatingHours = parseMaybeJsonObject(body.operatingHours ?? body.operating_hours);
+    const rawSocialMedia = parseMaybeJsonObject(body.socialMedia ?? body.social_media);
+
+    const normalizedBody = {
+      ...body,
+      operatingHours: {
+        weekdays: body.operatingHoursWeekdays ?? body.operating_hours_weekdays ?? rawOperatingHours.weekdays ?? '',
+        saturday: body.operatingHoursSaturday ?? body.operating_hours_saturday ?? rawOperatingHours.saturday ?? '',
+      },
+      socialMedia: {
+        facebook: body.socialMediaFacebook ?? body.social_media_facebook ?? rawSocialMedia.facebook ?? '',
+        instagram: body.socialMediaInstagram ?? body.social_media_instagram ?? rawSocialMedia.instagram ?? '',
+        youtube: body.socialMediaYoutube ?? body.social_media_youtube ?? rawSocialMedia.youtube ?? '',
+      },
+    };
 
     const existing = await db.select().from(schoolInformation).orderBy(desc(schoolInformation.id)).limit(1);
 
@@ -27,7 +59,7 @@ async function PUT(request: NextRequest) {
       await db
         .update(schoolInformation)
         .set({
-          ...body,
+          ...normalizedBody,
           updatedAt: new Date(),
         })
         .where(eq(schoolInformation.id, existing[0].id));
@@ -39,7 +71,7 @@ async function PUT(request: NextRequest) {
         .limit(1);
       return NextResponse.json({ success: true, data: updated });
     } else {
-      await db.insert(schoolInformation).values(body);
+      await db.insert(schoolInformation).values(normalizedBody);
       const [created] = await db.select().from(schoolInformation).orderBy(desc(schoolInformation.id)).limit(1);
       return NextResponse.json({ success: true, data: created });
     }

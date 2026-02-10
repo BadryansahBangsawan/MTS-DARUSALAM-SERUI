@@ -58,18 +58,19 @@ export default function Footer() {
   let instagramUrl = "#";
   let youtubeUrl = "#";
 
-  if (data.socialMedia) {
-    if (typeof data.socialMedia === 'object') {
-      facebookUrl = data.socialMedia.facebook || "#";
-      instagramUrl = data.socialMedia.instagram || "#";
-      youtubeUrl = data.socialMedia.youtube || "#";
-    } else if (typeof data.socialMedia === 'string') {
+  const socialMediaRaw = (data as any).socialMedia ?? (data as any).social_media;
+  if (socialMediaRaw) {
+    if (typeof socialMediaRaw === 'object') {
+      facebookUrl = socialMediaRaw.facebook || socialMediaRaw.facebookUrl || "#";
+      instagramUrl = socialMediaRaw.instagram || socialMediaRaw.instagramUrl || "#";
+      youtubeUrl = socialMediaRaw.youtube || socialMediaRaw.youtubeUrl || "#";
+    } else if (typeof socialMediaRaw === 'string') {
       try {
-        const parsed = JSON.parse(data.socialMedia);
+        const parsed = JSON.parse(socialMediaRaw);
         if (parsed && typeof parsed === 'object') {
-          facebookUrl = parsed.facebook || "#";
-          instagramUrl = parsed.instagram || "#";
-          youtubeUrl = parsed.youtube || "#";
+          facebookUrl = parsed.facebook || parsed.facebookUrl || "#";
+          instagramUrl = parsed.instagram || parsed.instagramUrl || "#";
+          youtubeUrl = parsed.youtube || parsed.youtubeUrl || "#";
         }
       } catch (e) {
       }
