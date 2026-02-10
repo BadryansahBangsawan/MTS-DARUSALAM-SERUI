@@ -20,7 +20,7 @@ export default function Home() {
         <VideoSection />
         <EnvironmentFeatures />
         <PrincipalWelcome />
-        <EkstrakurikulerPreview />
+
         <PersonalApproach />
         <OsissSection />
       </div>
