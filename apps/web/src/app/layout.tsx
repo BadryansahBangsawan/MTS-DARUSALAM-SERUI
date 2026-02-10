@@ -14,7 +14,11 @@ export const metadata: Metadata = {
   title: "MTs Darussalam - Sekolah Islam Setingkat SMP",
   description: "MTs Darussalam adalah sekolah Islam setingkat SMP yang siap membimbing kamu dengan metode pembelajaran modern dan islami",
   icons: {
-    icon: "/logo-mts.png",
+    icon: [
+      { url: "/logo-mts.png", type: "image/png" },
+    ],
+    shortcut: "/logo-mts.png",
+    apple: "/logo-mts.png",
   },
 };
 
