@@ -16,7 +16,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { authFetch, removeAuthToken } from "@/lib/auth";
 
@@ -71,7 +71,12 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -83,9 +88,12 @@ export default function AdminLayout({
     }
   };
 
-  const isLoginPage = pathname === "/admin/login";
+  // Hindari flash/glitch layout admin saat hydration awal
+  // dan pastikan route /admin/login (termasuk trailing slash/query) tidak pakai chrome dashboard.
+  const normalizedPath = pathname?.replace(/\/+$/, "") || "";
+  const isLoginPage = normalizedPath.startsWith("/admin/login");
 
-  if (isLoginPage) {
+  if (!mounted || isLoginPage) {
     return <>{children}</>;
   }
 
