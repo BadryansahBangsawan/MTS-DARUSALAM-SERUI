@@ -72,6 +72,7 @@ export default function AdminLayout({
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [authChecking, setAuthChecking] = useState(true);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -93,8 +94,68 @@ export default function AdminLayout({
   const normalizedPath = pathname?.replace(/\/+$/, "") || "";
   const isLoginPage = normalizedPath.startsWith("/admin/login");
 
-  if (!mounted || isLoginPage) {
+  useEffect(() => {
+    if (!mounted) return;
+
+    if (isLoginPage) {
+      setAuthChecking(false);
+      return;
+    }
+
+    let cancelled = false;
+
+    const checkAuth = async () => {
+      try {
+        const response = await authFetch("/api/auth/me");
+        const data = await response.json();
+
+        if (!data?.success) {
+          removeAuthToken();
+          window.location.replace("/admin/login");
+          return;
+        }
+
+        if (!cancelled) {
+          setAuthChecking(false);
+        }
+      } catch (error) {
+        console.error("Auth check failed:", error);
+        removeAuthToken();
+        window.location.replace("/admin/login");
+      }
+    };
+
+    void checkAuth();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [mounted, isLoginPage, pathname]);
+
+  if (!mounted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-10 w-10 border-4 border-slate-200 border-t-emerald-500 mx-auto"></div>
+          <p className="mt-3 text-sm text-slate-600">Memuat...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isLoginPage) {
     return <>{children}</>;
+  }
+
+  if (authChecking) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-10 w-10 border-4 border-slate-200 border-t-emerald-500 mx-auto"></div>
+          <p className="mt-3 text-sm text-slate-600">Memeriksa akses admin...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
