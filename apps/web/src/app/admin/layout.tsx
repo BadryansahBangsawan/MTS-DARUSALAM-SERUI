@@ -11,6 +11,7 @@ import {
   Layers,
   HeartHandshake,
   GraduationCap,
+  ShieldCheck,
   Bell,
   Settings,
   ChevronRight,
@@ -62,6 +63,12 @@ const menuItems = [
     icon: User,
     label: "Organisasi",
     color: "bg-gradient-to-br from-indigo-500 to-indigo-600",
+  },
+  {
+    href: "/admin/super-admin",
+    icon: ShieldCheck,
+    label: "Super Admin",
+    color: "bg-gradient-to-br from-rose-500 to-rose-600",
   },
 ];
 

@@ -7,6 +7,7 @@ export const users = pgTable('users', {
   passwordHash: varchar('password_hash', { length: 255 }).notNull(),
   name: varchar('name', { length: 255 }).notNull(),
   role: text('role').notNull().default('admin'),
+  isActive: boolean('is_active').notNull().default(true),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
   lastLogin: timestamp('last_login'),
@@ -24,6 +25,24 @@ export const sessions = pgTable('sessions', {
 }, (table) => ({
   userIdIdx: index('user_id_idx').on(table.userId),
   tokenIdx: uniqueIndex('token_idx').on(table.token),
+}));
+
+export const auditLogs = pgTable('audit_logs', {
+  id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
+  actorUserId: integer('actor_user_id'),
+  action: varchar('action', { length: 120 }).notNull(),
+  module: varchar('module', { length: 120 }).notNull(),
+  targetType: varchar('target_type', { length: 120 }),
+  targetId: varchar('target_id', { length: 120 }),
+  details: jsonb('details').$type<Record<string, unknown> | null>(),
+  ipAddress: varchar('ip_address', { length: 100 }),
+  userAgent: varchar('user_agent', { length: 500 }),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+}, (table) => ({
+  actionIdx: index('audit_logs_action_idx').on(table.action),
+  moduleIdx: index('audit_logs_module_idx').on(table.module),
+  actorIdx: index('audit_logs_actor_user_id_idx').on(table.actorUserId),
+  createdAtIdx: index('audit_logs_created_at_idx').on(table.createdAt),
 }));
 
 export const schoolInformation = pgTable('school_information', {

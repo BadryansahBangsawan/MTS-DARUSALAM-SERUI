@@ -32,6 +32,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (user.isActive === false) {
+      return NextResponse.json(
+        { success: false, error: 'Akun dinonaktifkan. Hubungi super admin.' },
+        { status: 403 }
+      );
+    }
+
     const isValidPassword = await verifyPassword(password, user.passwordHash);
     if (!isValidPassword) {
       console.log('[POST /api/auth/login] Invalid password');

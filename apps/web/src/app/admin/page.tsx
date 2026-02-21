@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Users, Award, Settings, TrendingUp, Plus, RefreshCw, ChevronRight, ArrowUp, ArrowDown, Users as UsersIcon, BookOpen, GraduationCap, Layers, HeartHandshake, Newspaper, MessageSquare } from "lucide-react";
+import { Users, Award, Settings, Plus, RefreshCw, ChevronRight, ArrowUp, ArrowDown, Users as UsersIcon, BookOpen, GraduationCap, Layers, HeartHandshake, Newspaper, MessageSquare, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { authFetch, removeAuthToken } from "@/lib/auth";
 
@@ -91,6 +91,7 @@ export default function AdminDashboard() {
     { href: "/admin/osis", icon: GraduationCap, label: "OSIS", color: "from-violet-500 to-violet-600", desc: "Kelola informasi OSIS sekolah" },
     { href: "/admin/environment-features", icon: Layers, label: "Lingkungan Belajar", color: "from-amber-500 to-amber-600", desc: "Kelola fitur lingkungan sekolah" },
     { href: "/admin/personal-approach", icon: HeartHandshake, label: "Pendekatan Personal", color: "from-pink-500 to-pink-600", desc: "Kelola pendekatan personal siswa" },
+    { href: "/admin/super-admin", icon: ShieldCheck, label: "Super Admin", color: "from-rose-500 to-rose-600", desc: "Akses pengaturan tingkat sistem" },
   ];
 
   const StatCard = ({ title, value, icon: Icon, color, trend }: any) => (

@@ -32,9 +32,14 @@ export async function getAuthUser(request: NextRequest) {
       email: users.email,
       name: users.name,
       role: users.role,
+      isActive: users.isActive,
     })
     .from(users)
     .where(eq(users.id, payload.userId));
+
+  if (!user?.isActive) {
+    return null;
+  }
 
   return user;
 }
@@ -53,6 +58,28 @@ export function requireAuth(handler: (request: NextRequest, user: any) => Promis
     if (user.role !== 'admin' && user.role !== 'staff') {
       return NextResponse.json(
         { success: false, error: 'Forbidden' },
+        { status: 403 }
+      );
+    }
+
+    return handler(request, user);
+  };
+}
+
+export function requireAdmin(handler: (request: NextRequest, user: any) => Promise<NextResponse>) {
+  return async (request: NextRequest) => {
+    const user = await getAuthUser(request);
+
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    if (user.role !== 'admin') {
+      return NextResponse.json(
+        { success: false, error: 'Forbidden: admin only' },
         { status: 403 }
       );
     }
